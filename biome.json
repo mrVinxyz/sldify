@@ -1,0 +1,33 @@
+{
+  "linter": {
+    "ignore": ["index.tsx", "index.css"],
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useTemplate": "off"
+      },
+      "a11y": {
+        "noNoninteractiveTabindex": "off"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "ignore": ["index.tsx", "index.css"],
+    "formatWithErrors": false,
+    "indentStyle": "tab",
+    "indentWidth": 4,
+    "lineEnding": "lf",
+    "lineWidth": 80
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "single",
+      "bracketSameLine": true,
+      "bracketSpacing": true,
+      "quoteProperties": "asNeeded",
+      "semicolons": "always"
+    }
+  }
+}
