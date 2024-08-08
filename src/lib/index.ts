@@ -1,3 +1,4 @@
 import { Dropdown } from './dropdown/dropdown';
+import { Input } from './input/input';
 
-export { Dropdown };
+export { Dropdown, Input };
