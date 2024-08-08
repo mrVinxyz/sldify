@@ -1,6 +1,5 @@
 {
   "linter": {
-    "ignore": ["index.tsx", "index.css"],
     "rules": {
       "recommended": true,
       "style": {
@@ -13,7 +12,6 @@
   },
   "formatter": {
     "enabled": true,
-    "ignore": ["index.tsx", "index.css"],
     "formatWithErrors": false,
     "indentStyle": "tab",
     "indentWidth": 4,
