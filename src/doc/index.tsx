@@ -2,15 +2,15 @@ import "./index.css";
 
 import { render } from "solid-js/web";
 import {Route, Router, RouteSectionProps} from "@solidjs/router";
-import Dropdown from "./dropdown/dropdown";
 import {JSX} from "solid-js";
+import DropdownHome from "./dropdown/dropdown-home";
 
 render(() => <Routing />, document.body);
 
 function Routing() {
 	return (
 		<Router root={Layout}>
-			<Route path="/dropdown" component={Dropdown} />
+			<Route path="/dropdown" component={DropdownHome} />
 		</Router>
 	);
 }
