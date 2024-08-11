@@ -5,6 +5,7 @@ import { Route, Router, type RouteSectionProps } from '@solidjs/router';
 import type { JSX } from 'solid-js';
 import DropdownHome from './dropdown/dropdown-home';
 import InputHome from './input/input-home';
+import FormHome from './form/form-home';
 
 render(() => <Routing />, document.body);
 
@@ -13,6 +14,7 @@ function Routing() {
 		<Router root={Layout}>
 			<Route path='/dropdown' component={DropdownHome} />
 			<Route path='/input' component={InputHome} />
+			<Route path='/form' component={FormHome} />
 		</Router>
 	);
 }
