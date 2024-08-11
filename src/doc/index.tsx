@@ -1,16 +1,20 @@
-import "./index.css";
+import './index.css';
 
-import { render } from "solid-js/web";
-import {Route, Router, RouteSectionProps} from "@solidjs/router";
-import Dropdown from "./dropdown/dropdown";
-import {JSX} from "solid-js";
+import { render } from 'solid-js/web';
+import { Route, Router, type RouteSectionProps } from '@solidjs/router';
+import type { JSX } from 'solid-js';
+import DropdownHome from './dropdown/dropdown-home';
+import InputHome from './input/input-home';
+import FormHome from './form/form-home';
 
 render(() => <Routing />, document.body);
 
 function Routing() {
 	return (
 		<Router root={Layout}>
-			<Route path="/dropdown" component={Dropdown} />
+			<Route path='/dropdown' component={DropdownHome} />
+			<Route path='/input' component={InputHome} />
+			<Route path='/form' component={FormHome} />
 		</Router>
 	);
 }
@@ -18,5 +22,5 @@ function Routing() {
 function Layout(props: RouteSectionProps): JSX.Element {
 	return (
 		<div class={'p-4 bg-gray-50 w-screen h-screen'}>{props.children}</div>
-	)
+	);
 }
