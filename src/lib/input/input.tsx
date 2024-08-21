@@ -29,12 +29,12 @@ const Label = (props: LabelProps) => {
 	);
 };
 
-type MessageProps = {
+type FeedbackProps = {
 	msg: string;
 	class?: string;
 };
 
-const Message = (props: MessageProps) => {
+const Feedback = (props: FeedbackProps) => {
 	return (
 		<p
 			class={`mt-2 text-sm lg:text-base font-medium text-gray-800 ${props.class || ''}`}>
@@ -143,7 +143,7 @@ const Select = (props: SelectProps) => {
 export const Input = {
 	Group,
 	Label,
-	Message,
+	Feedback,
 	Input: InputEl,
 	TextArea,
 	Select,

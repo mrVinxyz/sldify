@@ -193,7 +193,7 @@ export function FormInput(props: FormInputProps) {
 								: ''
 						}
 					/>
-					<Input.Message
+					<Input.Feedback
 						msg={field.errors()}
 						class={field.errors() ? 'text-red-600' : ''}
 					/>
@@ -226,7 +226,7 @@ export function FormTextArea(props: FormTextAreaProps) {
 						}
 						class={field.errors() ? 'border-red-600' : ''}
 					/>
-					<Input.Message msg={field.errors()} />
+					<Input.Feedback msg={field.errors()} />
 				</Input.Group>
 			)}
 		</Field>
@@ -258,7 +258,7 @@ export function FormSelect(props: FormSelectProps) {
 						}
 						class={field.errors() ? 'border-red-600' : ''}
 					/>
-					<Input.Message msg={field.errors()} />
+					<Input.Feedback msg={field.errors()} />
 				</Input.Group>
 			)}
 		</Field>
