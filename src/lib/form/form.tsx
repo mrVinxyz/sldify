@@ -34,6 +34,7 @@ export type FormProps<T> = {
 	submitAction?: (data: FormsData) => Promise<Response>;
 	submitResult?: (result: unknown) => void;
 	validate?: (values: FormsData | T) => FormErr;
+	storage?: 'session' | 'local';
 };
 
 const formContext = createContext<FormContextProps>();
@@ -66,6 +67,14 @@ export function Form<T>(props: {
 }): JSX.Element {
 	const formEl = props.form as FormProps<T>;
 	const ctx = 'name' in props.form ? createForm(formEl) : props.form;
+	// biome-ignore format:
+	const storage =
+		formEl.storage === 'session' ? sessionStorage :
+			formEl.storage === 'local' ? localStorage :
+				null;
+
+	let thisForm: HTMLFormElement;
+	let allFields: Array<string> = [];
 
 	const handleSubmit = (e: Event) => {
 		e.preventDefault();
@@ -91,39 +100,58 @@ export function Form<T>(props: {
 				?.submitAction?.(ctx.data)
 				.then(async (res) => handleResponse(res));
 		} catch (e) {
-			throw new Error('Error submitting form: ' + e);
+			throw new Error(`Error submitting form: ${e}`);
 		}
 	};
 
-	const validateInputNames = (form: HTMLFormElement) => {
-		const inputs = form.querySelectorAll('input, textarea, select');
-		const names = Array.from(inputs).map((input) =>
-			input.getAttribute('name'),
-		);
-		const duplicates = names.filter(
-			(name, index) => names.indexOf(name) !== index,
+	const fieldNames = (): string[] => {
+		const inputs = thisForm.querySelectorAll('input, textarea, select');
+		return Array.from(inputs)
+			.map((input) => input.getAttribute('name'))
+			.filter((name): name is string => name !== null);
+	};
+
+	const validateInputNames = (fields: string[]) => {
+		const duplicates = fields.filter(
+			(name, index) => fields.indexOf(name) !== index,
 		);
 
 		if (duplicates.length > 0)
 			throw new Error(`Duplicate input names: ${duplicates}`);
 	};
 
+	const storeFormData = () => {
+		const dataToStore = allFields.reduce((acc, field) => {
+			acc[field] = ctx.data[field];
+			return acc;
+		}, {} as FormsData);
+
+		storage?.setItem(formEl.name, JSON.stringify(dataToStore));
+	};
+
+	const getStoredFormData = () => {
+		const storedData = storage?.getItem(formEl.name);
+		const val = JSON.parse(storedData || '{}');
+		console.log(val);
+		if (storedData) ctx.setData(JSON.parse(storedData));
+	};
+
 	onMount(() => {
-		const form = document.getElementById(
-			formEl.name + 'Form',
+		thisForm = document.getElementById(
+			`${formEl.name}Form`,
 		) as HTMLFormElement;
-		validateInputNames(form);
+		allFields = fieldNames();
+		validateInputNames(allFields);
+
+		getStoredFormData();
 	});
 
-	createEffect(() => {
-		console.log('form value', ctx.data.field);
-		console.log('form err', ctx.errors.field);
-	});
+	createEffect(() => storeFormData());
 
 	return (
 		<formContext.Provider value={ctx}>
 			<form
-				id={formEl.name + 'Form'}
+				id={`${formEl.name}Form`}
 				name={formEl.name}
 				onSubmit={handleSubmit}
 				autocomplete={'off'}
