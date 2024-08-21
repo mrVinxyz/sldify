@@ -29,12 +29,12 @@ const Label = (props: LabelProps) => {
 	);
 };
 
-type MessageProps = {
+type FeedbackProps = {
 	msg: string;
 	class?: string;
 };
 
-const Message = (props: MessageProps) => {
+const Feedback = (props: FeedbackProps) => {
 	return (
 		<p
 			class={`mt-2 text-sm lg:text-base font-medium text-gray-800 ${props.class || ''}`}>
@@ -67,6 +67,7 @@ const InputEl = (props: InputProps) => {
 		<input
 			id={prop.name + 'Input'}
 			name={prop.name}
+			type='text'
 			class={`block w-full rounded-md p-2 bg-gray-50 border border-gray-300 text-gray-800 font-medium focus:ring-blue-600 focus:border-blue-600 text-sm lg:text-base ${props.disabled && 'cursor-not-allowed'} ${prop.class || ''}`}
 			placeholder={prop.placeholder}
 			disabled={prop?.disabled}
@@ -109,6 +110,7 @@ type SelectProps = {
 	name: string;
 	options: { name: string; value: string }[];
 	default?: { name: string; value: string };
+	value?: string | number;
 	onChange?: (e: Event) => void;
 	disabled?: boolean;
 	class?: string;
@@ -120,14 +122,18 @@ const Select = (props: SelectProps) => {
 		<select
 			id={props.name}
 			name={props.name}
-			class={`w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm lg:text-base font-medium rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 pe-5 ${props.disabled && 'cursor-not-allowed'} ${props.class || ''}`}
+			class={`w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm lg:text-base font-medium rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2 ${props.disabled && 'cursor-not-allowed'} ${props.class || ''}`}
 			onChange={props.onChange}>
 			<option value={props?.default?.value || ''} selected>
 				{props?.default?.name || ''}
 			</option>
 			<For each={props.options}>
 				{(option) => (
-					<option value={option.value}>{option.name}</option>
+					<option
+						value={option.value}
+						selected={props?.value === option.value}>
+						{option.name}
+					</option>
 				)}
 			</For>
 		</select>
@@ -137,7 +143,7 @@ const Select = (props: SelectProps) => {
 export const Input = {
 	Group,
 	Label,
-	Message,
+	Feedback,
 	Input: InputEl,
 	TextArea,
 	Select,

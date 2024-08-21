@@ -1,6 +1,7 @@
 import {
 	createContext,
 	createEffect,
+	createMemo,
 	createSignal,
 	type JSXElement,
 } from 'solid-js';
@@ -21,13 +22,17 @@ const FieldContext = createContext<FieldContextProps>();
 export function useField(name: string): FieldContextProps {
 	const [value, setValue] = createSignal<FieldValue>('');
 	const [errors, setErrors] = createSignal<FieldErr>('');
+	let wasModified = false;
 
 	const formCtx = useForm();
 
 	const updateFormData = () => {
+		const val = createMemo(() => value());
+		if (val() === '' && !wasModified) return;
+
 		formCtx?.setData((prevData: FormsData) => ({
 			...prevData,
-			[name]: value(),
+			[name]: val(),
 		}));
 	};
 
@@ -36,6 +41,14 @@ export function useField(name: string): FieldContextProps {
 			...prev,
 			[name]: errors(),
 		}));
+	};
+
+	const updateFieldVal = () => {
+		const val = formCtx.data[name];
+		if (val) {
+			wasModified = true;
+			setValue(val);
+		}
 	};
 
 	const updateFieldErr = () => {
@@ -47,6 +60,7 @@ export function useField(name: string): FieldContextProps {
 
 	createEffect(() => updateFormData());
 	createEffect(() => updateFormErr());
+	createEffect(() => updateFieldVal());
 	createEffect(() => updateFieldErr());
 
 	return {
