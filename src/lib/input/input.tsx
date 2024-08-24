@@ -7,9 +7,7 @@ type GroupProps = {
 
 const Group = (props: GroupProps) => {
 	return (
-		<div class={`relative block w-full col-span-12 ${props.class || ''}`}>
-			{props.children}
-		</div>
+		<div class={`relative block w-full col-span-12 ${props.class || ''}`}>{props.children}</div>
 	);
 };
 
@@ -23,7 +21,8 @@ const Label = (props: LabelProps) => {
 	return (
 		<label
 			for={props.for}
-			class={`mb-2 text-sm lg:text-base font-medium text-gray-800 flex items-center ${props.class || ''}`}>
+			class={`mb-2 text-sm lg:text-base font-medium text-gray-800 flex items-center ${props.class || ''}`}
+		>
 			{props.label}
 		</label>
 	);
@@ -36,8 +35,7 @@ type FeedbackProps = {
 
 const Feedback = (props: FeedbackProps) => {
 	return (
-		<p
-			class={`mt-2 text-sm lg:text-base font-medium text-gray-800 ${props.class || ''}`}>
+		<p class={`mt-2 text-sm lg:text-base font-medium text-gray-800 ${props.class || ''}`}>
 			{props.msg}
 		</p>
 	);
@@ -86,12 +84,7 @@ type TextAreaProps = {
 };
 
 const TextArea = (props: TextAreaProps) => {
-	const [prop, others] = splitProps(props, [
-		'name',
-		'class',
-		'placeholder',
-		'disabled',
-	]);
+	const [prop, others] = splitProps(props, ['name', 'class', 'placeholder', 'disabled']);
 
 	return (
 		<textarea
@@ -123,15 +116,20 @@ const Select = (props: SelectProps) => {
 			id={props.name}
 			name={props.name}
 			class={`w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm lg:text-base font-medium rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2 ${props.disabled && 'cursor-not-allowed'} ${props.class || ''}`}
-			onChange={props.onChange}>
-			<option value={props?.default?.value || ''} selected>
+			onChange={props.onChange}
+		>
+			<option
+				value={props?.default?.value || ''}
+				selected
+			>
 				{props?.default?.name || ''}
 			</option>
 			<For each={props.options}>
 				{(option) => (
 					<option
 						value={option.value}
-						selected={props?.value === option.value}>
+						selected={props?.value === option.value}
+					>
 						{option.name}
 					</option>
 				)}

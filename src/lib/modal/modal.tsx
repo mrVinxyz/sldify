@@ -43,9 +43,7 @@ const Component = (props: { children: JSX.Element }) => {
 	let modalContentTarget: HTMLElement | null;
 	createEffect(() => {
 		if (isOpen() && modalContentTarget !== null) {
-			modalContentTarget = document.querySelector(
-				'.modal-content-target',
-			);
+			modalContentTarget = document.querySelector('.modal-content-target');
 		}
 	});
 
@@ -80,11 +78,7 @@ const Component = (props: { children: JSX.Element }) => {
 		window.removeEventListener('keydown', handleEscapeKey);
 	});
 
-	return (
-		<ModalContext.Provider value={ctxValue}>
-			{props.children}
-		</ModalContext.Provider>
-	);
+	return <ModalContext.Provider value={ctxValue}>{props.children}</ModalContext.Provider>;
 };
 
 const Trigger = (props: {
@@ -107,7 +101,8 @@ const Trigger = (props: {
 			onKeyPress={(e: KeyboardEvent) => {
 				const key = e.key;
 				if (key === 'Enter' || key === 'Backspace') updateModalState();
-			}}>
+			}}
+		>
 			{props.children}
 		</div>
 	);
@@ -120,7 +115,8 @@ const Content = (props: { children: JSX.Element }) => {
 			<div
 				tabindex='-1'
 				aria-hidden='true'
-				class='overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full max-h-full'>
+				class='overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-full max-h-full'
+			>
 				<div class='relative p-4 w-full max-w-2xl max-h-full'>
 					<div class='relative bg-white rounded-md shadow modal-content-target'>
 						{props.children}

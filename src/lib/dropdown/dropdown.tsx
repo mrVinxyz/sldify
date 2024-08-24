@@ -1,10 +1,4 @@
-import {
-	createContext,
-	createSignal,
-	type JSX,
-	onCleanup,
-	useContext,
-} from 'solid-js';
+import { createContext, createSignal, type JSX, onCleanup, useContext } from 'solid-js';
 import { randomHash } from '../util/utils';
 
 type DropDownContextProps = {
@@ -48,7 +42,10 @@ const Component = (props: {
 
 	return (
 		<DropDownContext.Provider value={ctxValue}>
-			<div id={dropdownId} class={'relative w-fit dropdown-component'}>
+			<div
+				id={dropdownId}
+				class={'relative w-fit dropdown-component'}
+			>
 				{props.children}
 			</div>
 		</DropDownContext.Provider>
@@ -69,7 +66,8 @@ const Trigger = (props: {
 					e.preventDefault();
 					ctx.setOpen(!ctx.open());
 				}
-			}}>
+			}}
+		>
 			{props.children}
 		</div>
 	);
@@ -83,10 +81,9 @@ const Menu = (props: {
 
 	return (
 		<div
-			class={`absolute z-10 w-48 mt-2 py-2 bg-white rounded-md shadow-md ${controlVisibility()} dropdown-menu`}>
-			<ul class='py-2 text-sm text-gray-700 dropdown-menu-list'>
-				{props.children}
-			</ul>
+			class={`absolute z-10 w-48 mt-2 py-2 bg-white rounded-md shadow-md ${controlVisibility()} dropdown-menu`}
+		>
+			<ul class='py-2 text-sm text-gray-700 dropdown-menu-list'>{props.children}</ul>
 		</div>
 	);
 };
@@ -97,7 +94,8 @@ const Item = (props: {
 	return (
 		<li
 			class='block px-4 py-2 hover:bg-gray-100 font-medium dropdown-item'
-			tabIndex={0}>
+			tabIndex={0}
+		>
 			{props.content}
 		</li>
 	);
@@ -106,11 +104,7 @@ const Item = (props: {
 const Group = (props: {
 	children: JSX.Element;
 }) => {
-	return (
-		<ul class='py-2 text-sm text-gray-700 dropdown-group'>
-			{props.children}
-		</ul>
-	);
+	return <ul class='py-2 text-sm text-gray-700 dropdown-group'>{props.children}</ul>;
 };
 
 export const Dropdown = {

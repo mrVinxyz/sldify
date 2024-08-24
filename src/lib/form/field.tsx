@@ -1,10 +1,4 @@
-import {
-	createContext,
-	createEffect,
-	createMemo,
-	createSignal,
-	type JSXElement,
-} from 'solid-js';
+import { createContext, createEffect, createMemo, createSignal, type JSXElement } from 'solid-js';
 import { type FormsData, useForm } from './form';
 
 export type FieldValue = string | number;
@@ -79,9 +73,5 @@ export type FieldProps = {
 export function Field(props: FieldProps) {
 	const ctx = useField(props.name);
 
-	return (
-		<FieldContext.Provider value={ctx}>
-			{props.children(ctx)}
-		</FieldContext.Provider>
-	);
+	return <FieldContext.Provider value={ctx}>{props.children(ctx)}</FieldContext.Provider>;
 }

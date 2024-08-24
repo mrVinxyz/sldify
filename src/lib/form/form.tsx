@@ -15,9 +15,7 @@ import { Input } from '../index';
 export type FormsData = Record<string, string | number>;
 export type FormErr = Record<string, string>;
 
-type SetterFn<T> = (
-	partialState: Partial<T> | ((prevState: T) => Partial<T>),
-) => void;
+type SetterFn<T> = (partialState: Partial<T> | ((prevState: T) => Partial<T>)) => void;
 
 export type FormContextProps = {
 	data: FormsData;
@@ -92,13 +90,10 @@ export function Form<T>(props: {
 					formEl?.submitResult?.(await res.json());
 					return;
 				}
-				if (res.status >= 400)
-					ctx.setErrors({ submit: await res.json() });
+				if (res.status >= 400) ctx.setErrors({ submit: await res.json() });
 			};
 
-			formEl
-				?.submitAction?.(ctx.data)
-				.then(async (res) => handleResponse(res));
+			formEl?.submitAction?.(ctx.data).then(async (res) => handleResponse(res));
 		} catch (e) {
 			throw new Error(`Error submitting form: ${e}`);
 		}
@@ -112,12 +107,9 @@ export function Form<T>(props: {
 	};
 
 	const validateInputNames = (fields: string[]) => {
-		const duplicates = fields.filter(
-			(name, index) => fields.indexOf(name) !== index,
-		);
+		const duplicates = fields.filter((name, index) => fields.indexOf(name) !== index);
 
-		if (duplicates.length > 0)
-			throw new Error(`Duplicate input names: ${duplicates}`);
+		if (duplicates.length > 0) throw new Error(`Duplicate input names: ${duplicates}`);
 	};
 
 	const storeFormData = () => {
@@ -137,9 +129,7 @@ export function Form<T>(props: {
 	};
 
 	onMount(() => {
-		thisForm = document.getElementById(
-			`${formEl.name}Form`,
-		) as HTMLFormElement;
+		thisForm = document.getElementById(`${formEl.name}Form`) as HTMLFormElement;
 		allFields = fieldNames();
 		validateInputNames(allFields);
 
@@ -155,7 +145,8 @@ export function Form<T>(props: {
 				name={formEl.name}
 				onSubmit={handleSubmit}
 				autocomplete={'off'}
-				noValidate={true}>
+				noValidate={true}
+			>
 				{props.children}
 			</form>
 		</formContext.Provider>
@@ -174,16 +165,17 @@ export function FormInput(props: FormInputProps) {
 		<Field name={props.name}>
 			{(field) => (
 				<Input.Group>
-					<Input.Label for={props.name} label={props.label} />
+					<Input.Label
+						for={props.name}
+						label={props.label}
+					/>
 					<Input.Input
 						name={props.name}
 						placeholder={props.placeholder}
 						value={field.value()}
 						onInput={(e: InputEvent) => props.mask?.(e)}
 						onChange={(e: Event) => {
-							field.setValue(
-								(e.target as HTMLInputElement).value,
-							);
+							field.setValue((e.target as HTMLInputElement).value);
 
 							field.setErrors('');
 						}}
@@ -214,15 +206,16 @@ export function FormTextArea(props: FormTextAreaProps) {
 		<Field name={props.name}>
 			{(field) => (
 				<Input.Group>
-					<Input.Label for={props.name} label={props.label} />
+					<Input.Label
+						for={props.name}
+						label={props.label}
+					/>
 					<Input.TextArea
 						name={props.name}
 						placeholder={props.placeholder}
 						value={field.value()}
 						onChange={(e: Event) =>
-							field.setValue(
-								(e.target as HTMLTextAreaElement).value,
-							)
+							field.setValue((e.target as HTMLTextAreaElement).value)
 						}
 						class={field.errors() ? 'border-red-600' : ''}
 					/>
@@ -245,16 +238,17 @@ export function FormSelect(props: FormSelectProps) {
 		<Field name={props.name}>
 			{(field) => (
 				<Input.Group>
-					<Input.Label for={props.name} label={props.label} />
+					<Input.Label
+						for={props.name}
+						label={props.label}
+					/>
 					<Input.Select
 						name={props.name}
 						options={props.options}
 						default={props.default}
 						value={field.value()}
 						onChange={(e: Event) =>
-							field.setValue(
-								(e.target as HTMLSelectElement).value,
-							)
+							field.setValue((e.target as HTMLSelectElement).value)
 						}
 						class={field.errors() ? 'border-red-600' : ''}
 					/>
