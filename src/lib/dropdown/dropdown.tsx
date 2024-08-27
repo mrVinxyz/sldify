@@ -1,9 +1,19 @@
-import { createContext, createSignal, type JSX, onCleanup, useContext } from 'solid-js';
-import { randomHash } from '../util/utils';
+import {
+	createContext,
+	createEffect,
+	createSignal,
+	type JSX,
+	onCleanup,
+	onMount,
+	useContext,
+} from 'solid-js';
+import { randomHash } from '../utils';
 
 type DropDownContextProps = {
 	open: () => boolean;
 	setOpen: (open: boolean) => void;
+	id: string;
+	position?: 'down' | 'up' | 'left' | 'right';
 };
 
 const DropDownContext = createContext<DropDownContextProps>();
@@ -19,32 +29,37 @@ export function useDropDown() {
 const Component = (props: {
 	id?: string;
 	children: JSX.Element;
+	position?: 'down' | 'up' | 'left' | 'right';
 }) => {
 	const [open, setOpen] = createSignal<boolean>(false);
-	const ctxValue = { open, setOpen };
 	const dropdownId = props.id || randomHash();
+	const position = props.position || 'down';
+
+	const ctxValue = { open, setOpen, id: dropdownId, position };
 
 	const handleOutsideClick = (e: MouseEvent) => {
 		const target = e.target as HTMLElement;
-		const element = document.getElementById(dropdownId);
-
+		const element = document.getElementById(`dropdown-${dropdownId}`);
 		if (!element?.contains(target)) {
 			setOpen(false);
 			return;
 		}
 	};
 
-	window.addEventListener('click', handleOutsideClick);
+	createEffect(() => {
+		if (open()) document.addEventListener('click', handleOutsideClick);
+		else document.removeEventListener('click', handleOutsideClick);
+	});
 
 	onCleanup(() => {
-		window.removeEventListener('click', handleOutsideClick);
+		document.removeEventListener('click', handleOutsideClick);
 	});
 
 	return (
 		<DropDownContext.Provider value={ctxValue}>
 			<div
-				id={dropdownId}
-				class={'relative w-fit dropdown-component'}
+				id={`dropdown-${dropdownId}`}
+				class={'dropdown-component relative'}
 			>
 				{props.children}
 			</div>
@@ -52,59 +67,91 @@ const Component = (props: {
 	);
 };
 
-const Trigger = (props: {
-	children: JSX.Element;
-}) => {
+const Trigger = (props: { children: JSX.Element }) => {
 	const ctx = useDropDown();
+
+	let items: HTMLElement[] = [];
+	onMount(() => {
+		items = document.querySelectorAll(`.dropdown-item${ctx.id}`) as unknown as HTMLElement[];
+		console.log(items);
+	});
+
+	const handleKeyNavigation = (e: KeyboardEvent) => {
+		e.preventDefault();
+
+		switch (e.key) {
+			case 'Enter' || ' ':
+				ctx.setOpen(!ctx.open());
+				break;
+			case 'Escape':
+				ctx.setOpen(false);
+				break;
+		}
+	};
 
 	return (
 		<div
-			class={'w-fit dropdown-trigger'}
+			id={`dropdown-trigger-${ctx.id}`}
+			class={'dropdown-trigger'}
 			onClick={() => ctx.setOpen(!ctx.open())}
-			onKeyDown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					e.preventDefault();
-					ctx.setOpen(!ctx.open());
-				}
-			}}
+			onKeyDown={handleKeyNavigation}
 		>
 			{props.children}
 		</div>
 	);
 };
 
-const Menu = (props: {
-	children: JSX.Element;
-}) => {
+const Menu = (props: { children: JSX.Element }) => {
 	const ctx = useDropDown();
 	const controlVisibility = () => (ctx.open() ? 'block' : 'hidden');
 
+	const positionClasses = () => {
+		switch (ctx.position) {
+			case 'up':
+				return 'bottom-full mb-1';
+			case 'right':
+				return 'left-full -top-2 ms-1';
+			case 'left':
+				return 'right-full -top-2 me-1';
+			case 'down':
+				return 'top-full mt-1';
+			default:
+				return 'top-full mt-1';
+		}
+	};
+
 	return (
 		<div
-			class={`absolute z-10 w-48 mt-2 py-2 bg-white rounded-md shadow-md ${controlVisibility()} dropdown-menu`}
+			id={`dropdown-menu-${ctx.id}`}
+			class={`absolute z-50 w-48 py-1 bg-white rounded-md border ${controlVisibility()} ${positionClasses()}`}
 		>
-			<ul class='py-2 text-sm text-gray-700 dropdown-menu-list'>{props.children}</ul>
+			<ul class='py-1 text-sm text-gray-700'>{props.children}</ul>
 		</div>
 	);
 };
 
-const Item = (props: {
-	content: string;
-}) => {
+const Item = (props: { content?: string; children?: JSX.Element }) => {
+	const ctx = useDropDown();
 	return (
 		<li
-			class='block px-4 py-2 hover:bg-gray-100 font-medium dropdown-item'
+			class={`block px-4 py-2 hover:bg-gray-100 font-medium dropdown-item${ctx.id} cursor-pointer focus:outline-none focus:bg-gray-100`}
 			tabIndex={0}
 		>
-			{props.content}
+			{props.content || props.children}
 		</li>
 	);
 };
 
-const Group = (props: {
-	children: JSX.Element;
-}) => {
-	return <ul class='py-2 text-sm text-gray-700 dropdown-group'>{props.children}</ul>;
+const Group = (props: { children: JSX.Element }) => {
+	const ctx = useDropDown();
+	return (
+		<ul
+			id={`dropdown-group-${ctx.id}`}
+			class='py-2 text-sm text-gray-700 dropdown-group'
+		>
+			{props.children}
+		</ul>
+	);
 };
 
 export const Dropdown = {

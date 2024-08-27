@@ -3,54 +3,162 @@ import {
 	createEffect,
 	createSignal,
 	type JSX,
-	type JSXElement,
 	onMount,
 	type Setter,
 	useContext,
 } from 'solid-js';
 import { createStore } from 'solid-js/store';
-import { Field } from './field';
-import { Input } from '../index';
 
-export type FormsData = Record<string, string | number>;
+/**
+ * A type representing form data as a record of key-value pairs.
+ */
+export type FormsData = Record<string, string>;
+
+/**
+ * A type representing form errors as a record of key-value pairs.
+ */
 export type FormErr = Record<string, string>;
 
+/**
+ * A type representing a setter function for updating state.
+ *
+ * @template T - The type of the state.
+ * @param {Partial<T> | ((prevState: T) => Partial<T>)} partialState - The partial state or a function returning the partial state.
+ */
 type SetterFn<T> = (partialState: Partial<T> | ((prevState: T) => Partial<T>)) => void;
 
+/**
+ * The context properties for a form.
+ */
 export type FormContextProps = {
-	data: FormsData;
-	setData: SetterFn<FormsData>;
+	/**
+	 * The form current state.
+	 */
+	state: FormsData;
+	/**
+	 * A function to update the form state.
+	 */
+	setState: SetterFn<FormsData>;
+	/**
+	 * The form errors state.
+	 */
 	errors: FormErr;
+	/**
+	 * A function to update the form errors.
+	 */
 	setErrors: SetterFn<FormErr>;
+	/**
+	 * A signal to indicate if the form is valid.
+	 */
 	isValid: () => boolean;
+	/**
+	 * A function to update the form validity state.
+	 */
 	setIsValid: Setter<boolean>;
 };
 
-export type FormProps<T> = {
+/**
+ * The properties for a form component.
+ *
+ * @template T - The type of the form data.
+ */
+export type FormProps<T extends object> = {
+	/**
+	 * The name of the form.
+	 */
 	name: string;
+	/**
+	 * The initial state of the form
+	 *
+	 * @example
+	 * const formData = {
+	 *    name: "John Doe",
+	 *    username: "johndoe"
+	 * }
+	 */
 	initialState?: FormsData;
+	/**
+	 * The action to be performed on form submission.
+	 *
+	 * @param {FormsData} data - The form data to be submitted.
+	 * @returns {Promise<Response>} A promise that resolves to the response of the submission.
+	 *
+	 * @example
+	 * const submitAction = async (data: FormsData) => {
+	 *     return fetch("/api/form", {}).then((res) => res.json());
+	 * }
+	 */
 	submitAction?: (data: FormsData) => Promise<Response>;
-	submitResult?: (result: unknown) => void;
+	/**
+	 * A function to handle the submission result.
+	 *
+	 * @param {R{}} result - The result of the form submission
+	 * @returns {void}
+	 *
+	 * @example
+	 * const submitResult = (result: unknown) => {
+	 *    console.log('Form submitted:', result);
+	 *    // Handle the form submission result
+	 *    // e.g. show a success message
+	 *    // or redirect to another page
+	 *    // or update the UI
+	 *    // etc.
+	 *    return;
+	 *}
+	 */
+	submitResult?: <R>(result: R | Record<string, string> | unknown) => void;
+	/**
+	 * A function to transform/pipeline the form data before submission.
+	 *
+	 * @param {FormsData | T{}} data - The form data to be transformed.
+	 * @returns {FormsData | T{}} The transformed form data.
+	 */
+	transform?: (data: FormsData | T) => FormsData | T;
+	/**
+	 * A function to validate the form data.
+	 *
+	 * @param {FormsData | T{}} values - The form data to be validated.
+	 * @returns {FormErr} The validation errors.
+	 */
 	validate?: (values: FormsData | T) => FormErr;
+	/**
+	 * The storage type for the form data.
+	 * Creates a persistent form state, storing the form data in the browser's session or local storage.
+	 */
 	storage?: 'session' | 'local';
 };
 
+/**
+ * Creates a context for the form.
+ */
 const formContext = createContext<FormContextProps>();
 
+/**
+ * A hook to use the form context.
+ *
+ * @returns {FormContextProps} The form context properties.
+ */
 export function useForm(): FormContextProps {
 	const ctx = useContext(formContext);
 	if (!ctx) throw new Error('useForm must be used within a Form component');
 	return ctx;
 }
 
-export function createForm<T>(props: FormProps<T>): FormContextProps {
-	const [data, setData] = createStore<FormsData>(props.initialState || {});
+/**
+ * Creates a form context with the given properties.
+ *
+ * @template T - The type of the form data.
+ * @param {FormProps<T>} props - The properties for the form.
+ * @returns {FormContextProps} The created form context properties.
+ */
+export function createForm<T extends object>(props: FormProps<T>): FormContextProps {
+	const [state, setState] = createStore<FormsData>(props.initialState || {});
 	const [errors, setErrors] = createStore<FormErr>();
 	const [isValid, setIsValid] = createSignal<boolean>(true);
 
 	return {
-		data,
-		setData,
+		state,
+		setState,
 		errors,
 		setErrors,
 		isValid,
@@ -59,9 +167,18 @@ export function createForm<T>(props: FormProps<T>): FormContextProps {
 	};
 }
 
-export function Form<T>(props: {
+/**
+ * A form component that handles form submission, validation, and state management.
+ *
+ * @template T - The type of the form data.
+ * @param {Object} props - The properties for the form component.
+ * @param {FormContextProps | FormProps<T>} props.form - The form context or form properties.
+ * @param {JSX.Element} props.children - The child elements to be within a form.
+ * @returns {JSX.Element} The form component.
+ */
+export function Form<T extends object>(props: {
 	form: FormContextProps | FormProps<T>;
-	children: JSXElement;
+	children: JSX.Element;
 }): JSX.Element {
 	const formEl = props.form as FormProps<T>;
 	const ctx = 'name' in props.form ? createForm(formEl) : props.form;
@@ -77,23 +194,23 @@ export function Form<T>(props: {
 	const handleSubmit = (e: Event) => {
 		e.preventDefault();
 
-		const errors = formEl?.validate?.(ctx.data);
+		const errors = formEl?.validate?.(ctx.state);
 		if (errors && Object.keys(errors).length > 0) {
 			ctx.setIsValid(false);
 			ctx.setErrors(errors);
 			return;
 		}
 
+		formEl.transform?.(ctx.state);
+
 		try {
-			const handleResponse = async (res: Response) => {
+			formEl?.submitAction?.(ctx.state).then(async (res) => {
 				if (res.ok) {
 					formEl?.submitResult?.(await res.json());
 					return;
 				}
 				if (res.status >= 400) ctx.setErrors({ submit: await res.json() });
-			};
-
-			formEl?.submitAction?.(ctx.data).then(async (res) => handleResponse(res));
+			});
 		} catch (e) {
 			throw new Error(`Error submitting form: ${e}`);
 		}
@@ -114,7 +231,7 @@ export function Form<T>(props: {
 
 	const storeFormData = () => {
 		const dataToStore = allFields.reduce((acc, field) => {
-			acc[field] = ctx.data[field];
+			acc[field] = ctx.state[field];
 			return acc;
 		}, {} as FormsData);
 
@@ -123,9 +240,7 @@ export function Form<T>(props: {
 
 	const getStoredFormData = () => {
 		const storedData = storage?.getItem(formEl.name);
-		const val = JSON.parse(storedData || '{}');
-		console.log(val);
-		if (storedData) ctx.setData(JSON.parse(storedData));
+		if (storedData) ctx.setState(JSON.parse(storedData));
 	};
 
 	onMount(() => {
@@ -150,111 +265,5 @@ export function Form<T>(props: {
 				{props.children}
 			</form>
 		</formContext.Provider>
-	);
-}
-
-export type FormInputProps = {
-	name: string;
-	placeholder?: string;
-	label: string;
-	mask?: (e: InputEvent) => void;
-};
-
-export function FormInput(props: FormInputProps) {
-	return (
-		<Field name={props.name}>
-			{(field) => (
-				<Input.Group>
-					<Input.Label
-						for={props.name}
-						label={props.label}
-					/>
-					<Input.Input
-						name={props.name}
-						placeholder={props.placeholder}
-						value={field.value()}
-						onInput={(e: InputEvent) => props.mask?.(e)}
-						onChange={(e: Event) => {
-							field.setValue((e.target as HTMLInputElement).value);
-
-							field.setErrors('');
-						}}
-						class={
-							field.errors()
-								? 'border-red-600 focus:ring-red-600 focus:border-red-600'
-								: ''
-						}
-					/>
-					<Input.Feedback
-						msg={field.errors()}
-						class={field.errors() ? 'text-red-600' : ''}
-					/>
-				</Input.Group>
-			)}
-		</Field>
-	);
-}
-
-export type FormTextAreaProps = {
-	name: string;
-	placeholder?: string;
-	label: string;
-};
-
-export function FormTextArea(props: FormTextAreaProps) {
-	return (
-		<Field name={props.name}>
-			{(field) => (
-				<Input.Group>
-					<Input.Label
-						for={props.name}
-						label={props.label}
-					/>
-					<Input.TextArea
-						name={props.name}
-						placeholder={props.placeholder}
-						value={field.value()}
-						onChange={(e: Event) =>
-							field.setValue((e.target as HTMLTextAreaElement).value)
-						}
-						class={field.errors() ? 'border-red-600' : ''}
-					/>
-					<Input.Feedback msg={field.errors()} />
-				</Input.Group>
-			)}
-		</Field>
-	);
-}
-
-export type FormSelectProps = {
-	name: string;
-	label: string;
-	options: { name: string; value: string }[];
-	default?: { name: string; value: string };
-};
-
-export function FormSelect(props: FormSelectProps) {
-	return (
-		<Field name={props.name}>
-			{(field) => (
-				<Input.Group>
-					<Input.Label
-						for={props.name}
-						label={props.label}
-					/>
-					<Input.Select
-						name={props.name}
-						options={props.options}
-						default={props.default}
-						value={field.value()}
-						onChange={(e: Event) =>
-							field.setValue((e.target as HTMLSelectElement).value)
-						}
-						class={field.errors() ? 'border-red-600' : ''}
-					/>
-					<Input.Feedback msg={field.errors()} />
-				</Input.Group>
-			)}
-		</Field>
 	);
 }

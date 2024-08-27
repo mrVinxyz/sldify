@@ -8,6 +8,9 @@
       },
       "a11y": {
         "noNoninteractiveTabindex": "off"
+      },
+      "complexity": {
+        "noBannedTypes": "off"
       }
     }
   },
