@@ -1,6 +1,6 @@
 import { splitProps } from 'solid-js';
 import type { ClassName, Element } from '../types';
-import './input.css';
+import { cva } from 'class-variance-authority';
 
 export type InputStyle = 'nothing' | 'success' | 'error';
 
@@ -33,23 +33,47 @@ export type InputProps = {
  * @returns {Element} - The rendered InputEl component.
  */
 export const InputEl = (props: InputProps): Element => {
-	const [prop, others] = splitProps(props, ['name', 'placeholder', 'disabled', 'class', 'style']);
+	const [local, others] = splitProps(props, [
+		'name',
+		'placeholder',
+		'disabled',
+		'class',
+		'style',
+	]);
+
+	const inputClasses = cva(
+		'block w-full rounded-md p-2.5 bg-gray-50 border-2 text-gray-800 font-medium text-sm transition focus:outline-none focus:ring-1',
+		{
+			variants: {
+				style: {
+					nothing: 'border-gray-200 focus:border-blue-600 focus:ring-blue-600',
+					success: 'bg-green-50 text-green-900 border-green-600 focus:ring-green-600',
+					error: 'bg-red-50 text-red-900 border-red-600 focus:ring-red-600',
+				},
+				disabled: {
+					true: 'cursor-not-allowed opacity-60',
+					false: '',
+				},
+			},
+			defaultVariants: {
+				style: 'nothing',
+				disabled: false,
+			},
+		},
+	);
 
 	return (
 		<input
-			id={prop.name + 'Input'}
-			name={prop.name}
+			id={`${local.name}Input`}
+			name={local.name}
 			type='text'
-			classList={{
-				input: true,
-				'input-success': prop.style === 'success',
-				'input-error': prop.style === 'error',
-				'cursor-not-allowed': prop.disabled,
-				[prop.class || '']: !!prop.class,
-			}}
-			placeholder={prop.placeholder}
-			disabled={prop?.disabled}
-			autocomplete={'off'}
+			class={
+				inputClasses({ style: local.style, disabled: local.disabled }) +
+				' '.concat(local.class || '')
+			}
+			placeholder={local.placeholder}
+			disabled={local.disabled}
+			autocomplete='off'
 			{...others}
 		/>
 	);

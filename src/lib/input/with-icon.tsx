@@ -12,7 +12,7 @@ export const InputWithIcon = (props: {
 				<div class='relative'>
 					<span class='absolute top-4 left-4'>{props.leadingIcon}</span>
 					<InputEl
-						class={'input-with-icon-leading'}
+						class={'ps-10'}
 						{...props.input}
 					/>
 				</div>
@@ -22,7 +22,7 @@ export const InputWithIcon = (props: {
 				<div class='relative'>
 					<span class='absolute top-4 right-4'>{props.trailingIcon}</span>
 					<InputEl
-						class={'input-with-icon-trailing'}
+						class={'pe-10'}
 						{...props.input}
 					/>
 				</div>

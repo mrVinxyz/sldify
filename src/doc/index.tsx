@@ -1,4 +1,4 @@
-import '../index.css';
+import './index.css';
 
 import { render } from 'solid-js/web';
 import { Routing } from './routing';

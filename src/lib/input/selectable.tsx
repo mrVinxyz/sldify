@@ -28,7 +28,7 @@ export type SelectContextProps<V> = {
 };
 
 /**
- * Create a context for the Selectable component with the specified props.
+ * Create a context for the Selection component with the specified props.
  *
  * @template T - The type of value stored in the context.
  * @returns {Context<SelectContextProps<unknown>>} The created context object.
@@ -36,18 +36,18 @@ export type SelectContextProps<V> = {
 const SelectContext = createContext<SelectContextProps<unknown>>();
 
 /**
- * Hook to obtain the select context props from the nearest Selectable component.
+ * Hook to obtain the select context props from the nearest Selection component.
  *
  * @template T - The type of the select context.
  *
  * @returns {SelectContextProps<T>} - The select context props.
  *
- * @throws {Error} - If useSelect is not used within a Selectable component.
+ * @throws {Error} - If useSelect is not used within a Selection component.
  */
 export function useSelect<V>(): SelectContextProps<V> {
 	const ctx = useContext(SelectContext);
 	if (!ctx) {
-		throw new Error('useSelect must be used within a Selectable component');
+		throw new Error('useSelect must be used within a Selection component');
 	}
 	return ctx as SelectContextProps<V>;
 }
@@ -215,9 +215,9 @@ export const Select = {
 };
 
 /**
- * The `SelectableProps` interface represents the props that can be passed to a selectable component.
+ * The `SelectionProps` interface represents the props that can be passed to a selectable component.
  */
-export type SelectableProps<V> = {
+export type SelectionProps<V> = {
 	/** The name of the selectable component. */
 	name: string;
 	/** The label for the selectable component. */
@@ -243,7 +243,7 @@ export type SelectableProps<V> = {
  *
  * @return {JSX.Element} The rendered selectable component.
  */
-export function Selectable<V>(props: SelectableProps<V>): Element {
+export function Selection<V>(props: SelectionProps<V>): Element {
 	return (
 		<Select.Group>
 			<Select.Label

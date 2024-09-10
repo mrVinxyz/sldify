@@ -1,5 +1,5 @@
 import { InputEl, InputGroup, Label } from '../../lib';
-import { Select, Selectable } from '../../lib/input/selectable';
+import { Select, Selection } from '../../lib/input/selectable';
 import { InputSelect } from '../../lib/input/select';
 import { TextArea } from '../../lib/input/text-area';
 import { InputWithIcon } from '../../lib/input/with-icon';
@@ -152,10 +152,10 @@ export default () => (
 			</Select.OptionMap>
 		</Select.Group>
 
-		{/* Advanced Selectable */}
-		<Selectable
+		{/* Advanced Selection */}
+		<Selection
 			name={'selectable'}
-			label={'Example Advanced Selectable'}
+			label={'Example Advanced Selection'}
 			placeholder={'Select an option'}
 			options={[
 				{ name: 'Option 1', value: '1' },
