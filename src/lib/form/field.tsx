@@ -46,10 +46,8 @@ export function useField(name: string): FieldContextProps {
 
 	const formCtx = useForm();
 
-	/**
-	 * Update the form data with the current field value.
-	 */
-	const updateFormData = () => {
+	/** Update the form data with the current field value. */
+	const updateFormData = (value: () => string) => {
 		const val = createMemo(() => value());
 		if (val() === '' && !wasModified) return;
 
@@ -59,9 +57,7 @@ export function useField(name: string): FieldContextProps {
 		}));
 	};
 
-	/**
-	 * Update the form errors with the current field errors.
-	 */
+	/** Update the form errors with the current field errors. */
 	const updateFormErr = () => {
 		formCtx?.setErrors((prev: Record<string, string>) => ({
 			...prev,
@@ -69,9 +65,7 @@ export function useField(name: string): FieldContextProps {
 		}));
 	};
 
-	/**
-	 * Update the field value from the form context state.
-	 */
+	/** Update the field value from the form context state. */
 	const updateFieldVal = () => {
 		const val = formCtx.state[name];
 		if (val) {
@@ -80,9 +74,7 @@ export function useField(name: string): FieldContextProps {
 		}
 	};
 
-	/**
-	 * Update the field errors from the form context errors.
-	 */
+	/** Update the field errors from the form context errors. */
 	const updateFieldErr = () => {
 		const err = formCtx.errors[name];
 		if (err) {
@@ -90,7 +82,7 @@ export function useField(name: string): FieldContextProps {
 		}
 	};
 
-	createEffect(() => updateFormData());
+	createEffect(() => updateFormData(value));
 	createEffect(() => updateFormErr());
 	createEffect(() => updateFieldVal());
 	createEffect(() => updateFieldErr());
@@ -103,9 +95,7 @@ export function useField(name: string): FieldContextProps {
 	};
 }
 
-/**
- * Props for the Field component, including the field name and children.
- */
+/** Props for the Field component, including the field name and children. */
 export type FieldProps = {
 	name: string;
 	children: (ctx: FieldContextProps) => JSXElement;

@@ -8,7 +8,7 @@ import {
 	useContext,
 	createMemo,
 } from 'solid-js';
-import {Portal} from "solid-js/web";
+import { Portal } from 'solid-js/web';
 
 /**
  * Enum representing the state of the modal.
@@ -202,7 +202,9 @@ const Content = (props: ModalContentProps): JSX.Element => {
 				</div>
 			</div>
 
-			<Portal mount={document.body}><div class={'fixed inset-0 h-screen w-screen bg-black opacity-20'}/></Portal>
+			<Portal mount={document.body}>
+				<div class={'fixed inset-0 h-screen w-screen bg-black opacity-20'} />
+			</Portal>
 		</Show>
 	);
 };

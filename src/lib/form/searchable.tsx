@@ -6,6 +6,7 @@ import {
 	For,
 	type JSX,
 	onCleanup,
+	onMount,
 	Show,
 	useContext,
 } from 'solid-js';
@@ -107,13 +108,24 @@ export function FormSearchable<T>(props: SearchableProps<T>): JSX.Element {
 	const handleOnInput = (e: InputEvent) => {
 		const value = (e.target as HTMLInputElement).value;
 		setShowList(false);
-		mutate();
 		setIsWaiting(true);
 		setTimeout(() => {
 			setSearchParam({ [props.searchKey]: value });
 			window.addEventListener('click', handleOutsideClick);
 			window.addEventListener('keydown', handleKeyNavigation);
 		}, awaitTime);
+		mutate();
+	};
+
+	const triggerSearch = () => {
+		setShowList(false);
+		setIsWaiting(true);
+
+		setSearchParam({});
+		window.addEventListener('click', handleOutsideClick);
+		window.addEventListener('keydown', handleKeyNavigation);
+
+		mutate();
 	};
 
 	const handleSelectOnClick = (obj: T) => {
@@ -178,13 +190,15 @@ export function FormSearchable<T>(props: SearchableProps<T>): JSX.Element {
 
 	return (
 		<InputSelectSearchContext.Provider value={{}}>
-			<div class={`relative col-span-12 md:${gridColsSpanSize(props.size || '')}`}>
+			<div
+				class={`relative col-span-12 md:${gridColsSpanSize(props.size || '')}`}
+				onClick={triggerSearch}
+				onKeyDown={(e) => e.key === 'Enter' && triggerSearch}
+			>
 				<div class={'relative'}>
 					<label
 						for={props.name + 'Input'}
-						class={
-							'mb-2 text-sm lg:text-base font-medium text-gray-900 flex items-center'
-						}
+						class={'mb-2 text-sm font-medium text-gray-900 flex items-center'}
 					>
 						{props.label}
 					</label>
@@ -193,7 +207,7 @@ export function FormSearchable<T>(props: SearchableProps<T>): JSX.Element {
 						id={props.name + 'Input'}
 						name={props.name}
 						class={
-							'block w-full font-medium p-2 bg-gray-50 border border-gray-200 rounded-md text-gray-900 text-sm lg:text-base focus:ring-blue-500 focus:border-blue-500'
+							'block w-full font-medium p-2.5 bg-gray-50 border border-gray-200 rounded-md text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500'
 						}
 						placeholder={props.placeholder}
 						onInput={handleOnInput}
@@ -243,7 +257,7 @@ export function FormSearchable<T>(props: SearchableProps<T>): JSX.Element {
 									<li>
 										<button
 											type='button'
-											class='block p-2 hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none'
+											class='block w-full text-start p-2 hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none'
 											onClick={() => handleSelectOnClick(v)}
 										>
 											{v[props.displayKey] as string}
@@ -255,12 +269,9 @@ export function FormSearchable<T>(props: SearchableProps<T>): JSX.Element {
 								<>
 									<span class='block border-b border-gray-200 my-2' />
 									<li>
-										<button
-											type='button'
-											class='block p-2 hover:bg-gray-100 rounded-md'
-										>
+										<div class='block p-2 hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none'>
 											{props.actionOption}
-										</button>
+										</div>
 									</li>
 								</>
 							)}

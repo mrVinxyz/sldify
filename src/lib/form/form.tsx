@@ -8,6 +8,7 @@ import {
 	useContext,
 } from 'solid-js';
 import { createStore } from 'solid-js/store';
+import type { Element } from '../types';
 
 /**
  * A type representing form data as a record of key-value pairs.
@@ -128,9 +129,7 @@ export type FormProps<T extends object> = {
 	storage?: 'session' | 'local';
 };
 
-/**
- * Creates a context for the form.
- */
+/** Creates a context for the form. */
 const formContext = createContext<FormContextProps>();
 
 /**
@@ -149,7 +148,7 @@ export function useForm(): FormContextProps {
  *
  * @template T - The type of the form data.
  * @param {FormProps<T>} props - The properties for the form.
- * @returns {FormContextProps} The created form context properties.
+ * @returns {FormContextProps} The created form context.
  */
 export function createForm<T extends object>(props: FormProps<T>): FormContextProps {
 	const [state, setState] = createStore<FormsData>(props.initialState || {});
@@ -168,18 +167,44 @@ export function createForm<T extends object>(props: FormProps<T>): FormContextPr
 }
 
 /**
- * A form component that handles form submission, validation, and state management.
+ * Props for the `Form` component, defining the structure and behavior of the form.
  *
- * @template T - The type of the form data.
- * @param {Object} props - The properties for the form component.
- * @param {FormContextProps | FormProps<T>} props.form - The form context or form properties.
- * @param {JSX.Element} props.children - The child elements to be within a form.
- * @returns {JSX.Element} The form component.
+ * @template T - Represents the form's state type.
  */
-export function Form<T extends object>(props: {
+type BaseFormProps<T extends object> = {
+	/**
+	 * Represents either the form context or the initial form props.
+	 * - `FormContextProps`: If the form context already exists.
+	 * - `FormProps<T>`: If the form is to be created.
+	 */
 	form: FormContextProps | FormProps<T>;
-	children: JSX.Element;
-}): JSX.Element {
+
+	/**
+	 * Components to be rendered within the form context.
+	 */
+	children: Element;
+};
+
+/**
+ * The `Form` component for handling form submissions, validations, and state persistence.
+ *
+ * @template T - A generic type extending an object, representing the state of the form.
+ *
+ * @param {BaseFormProps<T>} props - Props object containing form context or form props and child components.
+ * @returns {Element} The JSX element representing the form.
+ *
+ * The form manages:
+ * - Validation on submit.
+ * - Data persistence in session or local storage.
+ * - Dynamic state management via a form context.
+ *
+ * The form includes the following key functionality:
+ * - Validation of input field names.
+ * - State transformation before submission.
+ * - Persistent storage of form data.
+ * - Handling form submission results and errors.
+ */
+export function Form<T extends object>(props: BaseFormProps<T>): Element {
 	const formEl = props.form as FormProps<T>;
 	const ctx = 'name' in props.form ? createForm(formEl) : props.form;
 	// biome-ignore format:

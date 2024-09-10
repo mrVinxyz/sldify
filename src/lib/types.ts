@@ -1,7 +1,12 @@
+import type { JSX } from 'solid-js';
+
+/** Represents a component. */
+export type Element = JSX.Element;
+
 /**
  * Typealias for classnames html interface.
  */
-type ClassName = HTMLElement['className'];
+export type ClassName = HTMLElement['className'];
 
 /**
  * `RangeSize` generates a union of numbers within a specified range `[Start, End)`.
@@ -14,7 +19,7 @@ type ClassName = HTMLElement['className'];
  * // Resulting type: 2 | 3 | 4 | 5 | 6
  * type Example = RangeSize<2, 6>;
  */
-type RangeSize<
+export type RangeSize<
 	Start extends number,
 	End extends number,
 	Result extends Array<unknown> = [],

@@ -1,7 +1,11 @@
 import { Field } from './field';
-import { Input } from '../input/input';
 import type { JSX } from 'solid-js';
-import { gridColsSpanSize } from '../utils';
+import { Label } from '../input/label';
+import { InputGroup } from '../input/group';
+import { InputEl } from '../input/input';
+import { InputFeedback } from '../input/feedback';
+import { TextArea } from '../input/text-area';
+import { InputSelect } from '../input/select';
 
 /** The input field size.
  * @values xs=2; sm=4; md=6; lg=8; xl=10; full=12;
@@ -21,9 +25,7 @@ export type FormInputProps = {
 	label: string;
 	/** Optional mask function to apply on input event. */
 	mask?: (e: InputEvent) => void;
-	/** The input field size.
-	 * @default w-full
-	 */
+	/** The input field size. Default `full`.*/
 	size?: FormInputSize;
 };
 
@@ -37,12 +39,12 @@ export function FormInput(props: FormInputProps): JSX.Element {
 	return (
 		<Field name={props.name}>
 			{(field) => (
-				<Input.Group size={props.size}>
-					<Input.Label
+				<InputGroup size={props.size}>
+					<Label
 						for={props.name}
 						label={props.label}
 					/>
-					<Input.Input
+					<InputEl
 						name={props.name}
 						placeholder={props.placeholder}
 						value={field.value()}
@@ -51,13 +53,12 @@ export function FormInput(props: FormInputProps): JSX.Element {
 							field.setValue((e.target as HTMLInputElement).value);
 							field.setErrors('');
 						}}
-						class={`${field.errors() ? 'border-red-600 focus:ring-red-600 focus:border-red-600' : ''}`}
 					/>
-					<Input.Feedback
+					<InputFeedback
+						type='error'
 						msg={field.errors()}
-						class={field.errors() ? 'text-red-600' : ''}
 					/>
-				</Input.Group>
+				</InputGroup>
 			)}
 		</Field>
 	);
@@ -97,12 +98,12 @@ export function FormTextArea(props: FormTextAreaProps): JSX.Element {
 	return (
 		<Field name={props.name}>
 			{(field) => (
-				<Input.Group size={props.size}>
-					<Input.Label
+				<InputGroup size={props.size}>
+					<Label
 						for={props.name}
 						label={props.label || ''}
 					/>
-					<Input.TextArea
+					<TextArea
 						name={props.name}
 						placeholder={props.placeholder}
 						value={field.value()}
@@ -111,8 +112,11 @@ export function FormTextArea(props: FormTextAreaProps): JSX.Element {
 						}
 						class={`${field.errors() ? 'border-red-600 focus:ring-red-600 focus:border-red-600' : ''}`}
 					/>
-					<Input.Feedback msg={field.errors()} />
-				</Input.Group>
+					<InputFeedback
+						type='error'
+						msg={field.errors()}
+					/>
+				</InputGroup>
 			)}
 		</Field>
 	);
@@ -145,12 +149,12 @@ export type FormSelectProps = {
  * ```tsx
  * <FormSelect
  *    name="color"
- *    label="Select a color"
+ *    label="Selectable a color"
  *    options={[
  *    	{ name: 'Red', value: '#ff0000' },
  *    	{ name: 'Green', value: '#00ff00' },
  *    ]}
- *    default={{ name: 'Select a color', value: '' }}
+ *    default={{ name: 'Selectable a color', value: '' }}
  *    />
  *    ```
  */
@@ -158,12 +162,12 @@ export function FormSelect(props: FormSelectProps): JSX.Element {
 	return (
 		<Field name={props.name}>
 			{(field) => (
-				<Input.Group class={`md:${gridColsSpanSize(props.size || '')}`}>
-					<Input.Label
+				<InputGroup size={props.size}>
+					<Label
 						for={props.name}
 						label={props.label}
 					/>
-					<Input.Select
+					<InputSelect
 						name={props.name}
 						options={props.options}
 						default={props.default}
@@ -173,8 +177,11 @@ export function FormSelect(props: FormSelectProps): JSX.Element {
 						}
 						class={`${field.errors() ? 'border-red-600 focus:ring-red-600 focus:border-red-600' : ''}`}
 					/>
-					<Input.Feedback msg={field.errors()} />
-				</Input.Group>
+					<InputFeedback
+						type='error'
+						msg={field.errors()}
+					/>
+				</InputGroup>
 			)}
 		</Field>
 	);
