@@ -29,8 +29,8 @@ export type InputProps = {
 /**
  * The Input component to render a text input field.
  *
- * @param {InputProps} props - The properties for the InputEl component.
- * @returns {Element} - The rendered InputEl component.
+ * @param {InputProps} props - The properties for the Input component.
+ * @returns {Element} - The Input component.
  */
 export const InputEl = (props: InputProps): Element => {
 	const [local, others] = splitProps(props, [
