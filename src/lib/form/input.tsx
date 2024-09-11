@@ -53,6 +53,7 @@ export function FormInput(props: FormInputProps): JSX.Element {
 							field.setValue((e.target as HTMLInputElement).value);
 							field.setErrors('');
 						}}
+						class={`${field.errors() ? 'border-red-600 focus:ring-red-600 focus:border-red-600' : ''}`}
 					/>
 					<InputFeedback
 						type='error'
