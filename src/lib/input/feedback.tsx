@@ -1,6 +1,6 @@
 import type { Element } from '../types';
 
-type InputFeedbackProps = {
+export type InputFeedbackProps = {
 	/** The properties for the InputFeedback component. */
 	msg: string;
 	/** The type of feedback message. */

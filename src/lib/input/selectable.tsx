@@ -62,7 +62,7 @@ export function useSelect<V>(): SelectContextProps<V> {
  *
  * @returns {Element} - The JSX element representing the group component.
  */
-const Group = <V,>(props: { id?: string; children: Element }): Element => {
+export const SelectGroup = <V,>(props: { id?: string; children: Element }): Element => {
 	const [value, setValue] = createSignal<SelectValue<V>>({} as SelectValue<V>);
 	const [open, setOpen] = createSignal<boolean>(false);
 	const id = props.id || randomHash();
@@ -105,7 +105,7 @@ const Group = <V,>(props: { id?: string; children: Element }): Element => {
  * @param {InputProps} props - The input props.
  * @returns {JSX.Element} - The rendered input component.
  */
-const Input = (props: InputProps): Element => {
+export const SelectInput = (props: InputProps): Element => {
 	const ctx = useSelect();
 
 	const handleKeyNavigation = (e: KeyboardEvent) => {
@@ -141,7 +141,7 @@ const Input = (props: InputProps): Element => {
  *
  * @returns {JSX.Element} The rendered OptionMap component.
  */
-const OptionMap = (props: { children: Element }): Element => {
+export const SelectOptionMap = (props: { children: Element }): Element => {
 	const ctx = useSelect();
 
 	return (
@@ -159,7 +159,7 @@ const OptionMap = (props: { children: Element }): Element => {
 };
 
 /** Represents the properties for the Option component. */
-type OptionProps<V> = {
+export type SelectOptionProps<V> = {
 	/** The display name for the option. */
 	name: string;
 	/** The value for the option. */
@@ -175,7 +175,7 @@ type OptionProps<V> = {
  * @param {JSX.Element} props.children - Any child components to be rendered within the option.
  * @returns {JSX.Element} The rendered option component.
  */
-const Option = <V,>(props: OptionProps<V>): Element => {
+export const SelectOption = <V,>(props: SelectOptionProps<V>): Element => {
 	const ctx = useSelect();
 	return (
 		<li
@@ -198,26 +198,9 @@ const Option = <V,>(props: OptionProps<V>): Element => {
 };
 
 /**
- * The Select object represents a dropdown menu widget, allowing users to select an option from a list.
- *
- * @property {Group} Group - A component used to group related options within the dropdown menu.
- * @property {Label} Label - A component used to display a label for the dropdown menu.
- * @property {Input} Input - A component used to handle user input and manage the dropdown menu's state.
- * @property {OptionMap} OptionMap - A helper class used to facilitate the mapping of option values to their corresponding labels.
- * @property {Option} Option - A component used to represent an option within the dropdown menu.
- */
-export const Select = {
-	Group,
-	Label,
-	Input,
-	OptionMap,
-	Option,
-};
-
-/**
  * The `SelectionProps` interface represents the props that can be passed to a selectable component.
  */
-export type SelectionProps<V> = {
+export type SelectableProps<V> = {
 	/** The name of the selectable component. */
 	name: string;
 	/** The label for the selectable component. */
@@ -225,9 +208,9 @@ export type SelectionProps<V> = {
 	/** The placeholder text for the selectable component. */
 	placeholder?: string;
 	/** The options for the selectable component. */
-	options: OptionProps<V>[];
+	options: SelectOptionProps<V>[];
 	/** The default option for the selectable component. */
-	default?: OptionProps<V>;
+	default?: SelectOptionProps<V>;
 	/** The selected value for the selectable component. */
 	value?: string | number;
 	/** The change event handler for the selectable component. */
@@ -243,35 +226,35 @@ export type SelectionProps<V> = {
  *
  * @return {JSX.Element} The rendered selectable component.
  */
-export function Selection<V>(props: SelectionProps<V>): Element {
+export function Selectable<V>(props: SelectableProps<V>): Element {
 	return (
-		<Select.Group>
-			<Select.Label
+		<SelectGroup>
+			<Label
 				for={props.name}
 				label={props.label}
 			/>
-			<Select.Input
+			<SelectInput
 				value={props.value}
 				disabled={props.disabled}
 				placeholder={props.placeholder}
 				{...props}
 			/>
-			<Select.OptionMap>
+			<SelectOptionMap>
 				{props.default && (
-					<Select.Option
+					<SelectOption
 						value={props.default.value}
 						name={props.default.name}
 					/>
 				)}
 				<For each={props.options}>
 					{(opt) => (
-						<Select.Option
+						<SelectOption
 							value={opt.value}
 							name={opt.name}
 						/>
 					)}
 				</For>
-			</Select.OptionMap>
-		</Select.Group>
+			</SelectOptionMap>
+		</SelectGroup>
 	);
 }
