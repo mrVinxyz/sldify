@@ -1,4 +1,4 @@
-import type { Element } from '../types';
+import type {JSX} from "solid-js";
 
 export type InputFeedbackProps = {
 	/** The properties for the InputFeedback component. */
@@ -13,7 +13,7 @@ export type InputFeedbackProps = {
  * @param {string} props.msg - The properties for the InputFeedback component.
  * @returns {JSX.Element} - The rendered InputFeedback component.
  */
-export const InputFeedback = (props: InputFeedbackProps): Element => {
+export const InputFeedback = (props: InputFeedbackProps): JSX.Element => {
 	return (
 		<p
 			classList={{

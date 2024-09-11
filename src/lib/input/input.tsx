@@ -1,5 +1,5 @@
-import { splitProps } from 'solid-js';
-import type { ClassName, Element } from '../types';
+import { type JSX, splitProps } from 'solid-js';
+import type { ClassName } from '../types';
 import { cva } from 'class-variance-authority';
 
 export type InputStyle = 'default' | 'success' | 'error';
@@ -30,9 +30,9 @@ export type InputProps = {
  * The Input component to render a text input field.
  *
  * @param {InputProps} props - The properties for the InputEl component.
- * @returns {Element} - The rendered InputEl component.
+ * @returns {JSX.Element} - The rendered InputEl component.
  */
-export const InputEl = (props: InputProps): Element => {
+export const InputEl = (props: InputProps): JSX.Element => {
 	const [local, others] = splitProps(props, [
 		'name',
 		'placeholder',
@@ -46,8 +46,10 @@ export const InputEl = (props: InputProps): Element => {
 		{
 			variants: {
 				style: {
-					default: 'border-gray-200 focus:border-blue-600 focus:ring-blue-600 focus:border-blue-600',
-					success: 'bg-green-50 text-green-800 border-green-600 focus:ring-green-600 focus:border-green-600',
+					default:
+						'border-gray-200 focus:border-blue-600 focus:ring-blue-600 focus:border-blue-600',
+					success:
+						'bg-green-50 text-green-800 border-green-600 focus:ring-green-600 focus:border-green-600',
 					error: 'bg-red-50 text-red-800 border-red-600 focus:ring-red-600 focus:border-red-600',
 				},
 				disabled: {

@@ -1,10 +1,16 @@
-import { createContext, useContext, createSignal, createEffect, onCleanup, For } from 'solid-js';
-
+import {
+	createContext,
+	useContext,
+	createSignal,
+	createEffect,
+	onCleanup,
+	For,
+	type JSX,
+} from 'solid-js';
 import { randomHash } from '../utils';
 import { InputEl, type InputProps } from './input';
 import { InputGroup } from './group';
 import { Label } from './label';
-import type { Element } from '../types';
 
 /** Represent the type of selected value. */
 type SelectValue<V> = Record<string, V>;
@@ -58,11 +64,11 @@ export function useSelect<V>(): SelectContextProps<V> {
  * @template T - The type of value in the group.
  * @param {Object} props - The properties for the group component.
  * @param {string} [props.id] - The optional ID for the group component.
- * @param {Element} props.children - The child elements to be wrapped by the group component.
+ * @param {JSX.Element} props.children - The child elements to be wrapped by the group component.
  *
- * @returns {Element} - The JSX element representing the group component.
+ * @returns {JSX.Element} - The JSX element representing the group component.
  */
-export const SelectGroup = <V,>(props: { id?: string; children: Element }): Element => {
+export const SelectGroup = <V,>(props: { id?: string; children: JSX.Element }): JSX.Element => {
 	const [value, setValue] = createSignal<SelectValue<V>>({} as SelectValue<V>);
 	const [open, setOpen] = createSignal<boolean>(false);
 	const id = props.id || randomHash();
@@ -105,7 +111,7 @@ export const SelectGroup = <V,>(props: { id?: string; children: Element }): Elem
  * @param {InputProps} props - The input props.
  * @returns {JSX.Element} - The rendered input component.
  */
-export const SelectInput = (props: InputProps): Element => {
+export const SelectInput = (props: InputProps): JSX.Element => {
 	const ctx = useSelect();
 
 	const handleKeyNavigation = (e: KeyboardEvent) => {
@@ -141,7 +147,7 @@ export const SelectInput = (props: InputProps): Element => {
  *
  * @returns {JSX.Element} The rendered OptionMap component.
  */
-export const SelectOptionMap = (props: { children: Element }): Element => {
+export const SelectOptionMap = (props: { children: JSX.Element }): JSX.Element => {
 	const ctx = useSelect();
 
 	return (
@@ -175,7 +181,7 @@ export type SelectOptionProps<V> = {
  * @param {JSX.Element} props.children - Any child components to be rendered within the option.
  * @returns {JSX.Element} The rendered option component.
  */
-export const SelectOption = <V,>(props: SelectOptionProps<V>): Element => {
+export const SelectOption = <V,>(props: SelectOptionProps<V>): JSX.Element => {
 	const ctx = useSelect();
 	return (
 		<li
@@ -226,7 +232,7 @@ export type SelectableProps<V> = {
  *
  * @return {JSX.Element} The rendered selectable component.
  */
-export function Selectable<V>(props: SelectableProps<V>): Element {
+export function Selectable<V>(props: SelectableProps<V>): JSX.Element {
 	return (
 		<SelectGroup>
 			<Label

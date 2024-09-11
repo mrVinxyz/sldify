@@ -1,8 +1,3 @@
-import type { JSX } from 'solid-js';
-
-/** Represents a component. */
-export type Element = JSX.Element;
-
 /**
  * Typealias for classnames html interface.
  */

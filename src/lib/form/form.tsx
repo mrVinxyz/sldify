@@ -8,7 +8,6 @@ import {
 	useContext,
 } from 'solid-js';
 import { createStore } from 'solid-js/store';
-import type { Element } from '../types';
 
 /**
  * A type representing form data as a record of key-value pairs.
@@ -182,7 +181,7 @@ type BaseFormProps<T extends object> = {
 	/**
 	 * Components to be rendered within the form context.
 	 */
-	children: Element;
+	children: JSX.Element;
 };
 
 /**
@@ -191,7 +190,7 @@ type BaseFormProps<T extends object> = {
  * @template T - A generic type extending an object, representing the state of the form.
  *
  * @param {BaseFormProps<T>} props - Props object containing form context or form props and child components.
- * @returns {Element} The JSX element representing the form.
+ * @returns {JSX.Element} The JSX element representing the form.
  *
  * The form manages:
  * - Validation on submit.
@@ -204,7 +203,7 @@ type BaseFormProps<T extends object> = {
  * - Persistent storage of form data.
  * - Handling form submission results and errors.
  */
-export function Form<T extends object>(props: BaseFormProps<T>): Element {
+export function Form<T extends object>(props: BaseFormProps<T>): JSX.Element {
 	const formEl = props.form as FormProps<T>;
 	const ctx = 'name' in props.form ? createForm(formEl) : props.form;
 	// biome-ignore format:

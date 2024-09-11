@@ -1,10 +1,10 @@
-import type { Element } from '../types';
 import { cva } from 'class-variance-authority';
+import type {JSX} from "solid-js";
 
 /** Props for the Group component. */
 export type InputGroupProps = {
 	/** The child elements to be rendered inside the group. */
-	children: Element;
+	children: JSX.Element;
 	/** The input field size. */
 	size?: InputGroupSize;
 	/** The id of the group element. */
@@ -23,7 +23,7 @@ export type InputGroupSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
  * @param {InputGroupProps} props - The properties for the Group component.
  * @returns {JSX.Element} - The rendered Group component.
  */
-export const InputGroup = (props: InputGroupProps): Element => {
+export const InputGroup = (props: InputGroupProps): JSX.Element => {
 	const groupClasses = cva('relative w-full col-span-12', {
 		variants: {
 			size: {

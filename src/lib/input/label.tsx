@@ -1,4 +1,4 @@
-import type { Element } from '../types';
+import type {JSX} from "solid-js";
 
 export type LabelProps = {
 	/** The id of the input element this label is associated with. */
@@ -12,9 +12,9 @@ export type LabelProps = {
  *
  * @param {string} props.for - The id of the input element this label is associated with.
  * @param {string} props.label - The text content of the label.
- * @returns {Element} - The rendered Label component.
+ * @returns {JSX.Element} - The rendered Label component.
  */
-export const Label = (props: LabelProps): Element => {
+export const Label = (props: LabelProps): JSX.Element => {
 	return (
 		<label
 			for={props.for}
