@@ -11,7 +11,7 @@ export default defineConfig({
             formats: ['es']
         },
         rollupOptions: {
-            external: ['solid-js'],
+            external: ['solid-js', "class-variance-authority"],
         },
         target: "esnext"
     },
