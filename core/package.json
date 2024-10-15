@@ -1,0 +1,7 @@
+{
+	"name": "core",
+	"main": "./index.ts",
+	"scripts": {
+		"build": "vite build"
+	}
+}
