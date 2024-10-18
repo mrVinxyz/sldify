@@ -1,9 +1,8 @@
-import { createEffect, onMount } from 'solid-js';
+import { createEffect, createSignal, onMount } from 'solid-js';
 import type { View } from '../types';
 import { createForm, formContext, type FormContext } from './context';
 
-/** The form data is a record of key-value pairs.
- */
+/** The form data is a record of key-value pairs. */
 export type FormsData = Record<string, unknown>;
 
 /**
@@ -48,8 +47,7 @@ export type FormProps<T extends object, R> = {
 	onSubmit?: (data: FormsData | T) => Promise<R>;
 	/***/
 	onSubmitResponse?: (data: R) => void;
-	// TODO impl this feature
-	onSubmitError?: () => void;
+	onSubmitError?: () => void; // TODO impl this feature
 	/**
 	 * A function to validate the form data.
 	 *
@@ -61,8 +59,6 @@ export type FormProps<T extends object, R> = {
 	 * Creates a persistent form state, storing the form data in the browser's session or local storage.
 	 */
 	storage?: 'session' | 'local';
-	// TODO deprecated, use onSubmit instead.
-	submit?: (data: FormsData | T) => Promise<R>;
 };
 
 /**
@@ -87,6 +83,13 @@ export type BaseFormProps<T extends object, R> = {
 export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 	const formEl = props.form as FormProps<T, R>;
 	const ctx = 'name' in props.form ? createForm(formEl) : props.form;
+
+	const [thisForm, setThisForm] = createSignal<HTMLFormElement>();
+	let allInputFields: Array<string> = [];
+
+	if (formEl.initialState) ctx.setState(formEl.initialState);
+
+
 	const storage =
 		formEl.storage === 'session'
 			? sessionStorage
@@ -94,33 +97,30 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 				? localStorage
 				: null;
 
-	console.log(formEl.initialState);
-
-	if (formEl.initialState) ctx.setState(formEl.initialState);
-
-	let thisForm: HTMLFormElement;
-	let allFields: Array<string> = [];
-
 	const handleSubmit = (e: Event) => {
-		console.log("did it even trigger?")
 		e.preventDefault();
 
+		const button = thisForm()?.querySelector('button[type="submit"]');
+		button ? button.setAttribute('disabled', 'true') : null;
+
 		const errors = formEl?.validate?.(ctx.state);
-		console.log(errors)
 		if (errors && Object.keys(errors).length > 0) {
 			ctx.setErrors(errors);
 			return;
 		}
 
 		try {
-			formEl?.submit?.(ctx.state).then(async (res: R) => formEl.onSubmitResponse?.(res));
+			formEl?.onSubmit?.(ctx.state).then(async (res: R) => {
+				formEl.onSubmitResponse?.(res);
+				button ? button.removeAttribute('disabled') : null;
+			});
 		} catch (e) {
 			throw new Error(`Error submitting form: ${e}`);
 		}
 	};
 
 	const fieldNames = (): string[] => {
-		const inputs = thisForm.querySelectorAll('input, textarea, select');
+		const inputs = thisForm()?.querySelectorAll('input, textarea, select') || [];
 		return Array.from(inputs)
 			.map((input) => input.getAttribute('name'))
 			.filter((name): name is string => name !== null);
@@ -128,12 +128,11 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 
 	const validateInputNames = (fields: string[]) => {
 		const duplicates = fields.filter((name, index) => fields.indexOf(name) !== index);
-
 		if (duplicates.length > 0) throw new Error(`Duplicate input names: ${duplicates}`);
 	};
 
 	const storeFormData = () => {
-		const dataToStore = allFields.reduce((acc, field) => {
+		const dataToStore = allInputFields.reduce((acc, field) => {
 			acc[field] = ctx.state[field];
 			return acc;
 		}, {} as FormsData);
@@ -143,28 +142,21 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 
 	const getStoredFormData = () => {
 		const storedData = storage?.getItem(formEl.name);
-
-		if (storedData) console.log(JSON.parse(storedData));
 		if (storedData) ctx.setState(JSON.parse(storedData));
 	};
 
 	onMount(() => {
-		thisForm = document.getElementById(`${formEl.name}Form`) as HTMLFormElement;
-		allFields = fieldNames();
-		validateInputNames(allFields);
-
+		allInputFields = fieldNames();
+		validateInputNames(allInputFields);
 		getStoredFormData();
 	});
 
 	createEffect(() => storeFormData());
 
-	createEffect(() => {
-		console.log(ctx.state);
-	});
-
 	return (
 		<formContext.Provider value={ctx}>
 			<form
+				ref={setThisForm}
 				id={`${formEl.name}Form`}
 				name={formEl.name}
 				onSubmit={handleSubmit}
