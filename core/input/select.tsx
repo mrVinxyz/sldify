@@ -29,7 +29,7 @@ export type SelectProps = VariantProps<typeof inputStyles> &
 	};
 
 export const InputSelect = <T,>(props: SelectProps): JSX.Element => {
-	const [local, others] = splitProps(props, [
+	const [prop, others] = splitProps(props, [
 		'className',
 		'disabled',
 		'name',
@@ -41,29 +41,29 @@ export const InputSelect = <T,>(props: SelectProps): JSX.Element => {
 	]);
 
 	const [value, setValue] = createSignal<SelectValueProp>({ value: '', name: '' });
-	createEffect(() => local.onSelect?.(value().value));
+	createEffect(() => prop.onSelect?.(value().value));
 
 	return (
 		<InputSelectContext.Provider value={{}}>
 			<select
 				{...others}
-				id={local.name}
-				name={local.name}
+				id={prop.name}
+				name={prop.name}
 				class={
-					inputStyles({ disabled: local.disabled, style: local.style }) +
-					' '.concat(local.className || '')
+					inputStyles({ disabled: prop.disabled, style: prop.style }) +
+					' '.concat(prop.className || '')
 				}
 				onChange={(e: Event) => {
 					const value = (e.target as HTMLSelectElement).value;
-					setValue({ name: local.name, value });
+					setValue({ name: prop.name, value });
 					props.onSelect?.(value);
 				}}
 			>
-				<For each={local.options}>
+				<For each={prop.options}>
 					{(option, i) => (
 						<option
 							value={String(option.value)}
-							selected={i() === local.defaultIndex}
+							selected={i() === prop.defaultIndex}
 						>
 							{option.name}
 						</option>
