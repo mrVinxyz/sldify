@@ -111,3 +111,36 @@ export type RangeSize<
 		? U
 		: never
 	: RangeSize<Start, End, [...Result, Result['length']]>;
+
+/**
+ * A utility type that creates a new type by omitting specified properties from the original type.
+ *
+ * @template T - The original type from which properties will be omitted.
+ * @template K - The keys of the properties to be omitted from the original type.
+ *
+ * @example
+ * // Given a type of Person
+ * type Person = {
+ *   name: string;
+ *   age: number;
+ *   email: string;
+ * };
+ *
+ * // Creating a new type without the email property
+ * type PersonWithoutEmail = OmitProp<Person, 'email'>;
+ * // Resulting type:
+ * // {
+ * //   name: string;
+ * //   age: number;
+ * // }
+ *
+ * @example
+ * // Omitting multiple properties
+ * type PersonWithoutContactInfo = OmitProp<Person, 'email' | 'age'>;
+ * // Resulting type:
+ * // {
+ * //   name: string;
+ * // }
+ */
+export type OmitProp<T, K extends PropertyKey> =
+	{ [P in keyof T as Exclude<P, K>]: T[P] }
