@@ -1,17 +1,22 @@
-import { InputGroup, type InputGroupProps, type InputGroupSize } from './group';
-export { InputGroup, type InputGroupProps, type InputGroupSize };
+import { InputGroup, type InputGroupProps, type InputGroupSizeVariant } from './group';
 
-import { type InputHelperProps, InputHelper } from './helper';
-export { type InputHelperProps, InputHelper };
+export { InputGroup, type InputGroupProps, type InputGroupSizeVariant };
+
+import { type InputFeedbackProps, InputFeedback } from './feedback';
+
+export { type InputFeedbackProps, InputFeedback };
 
 import { Input, type InputProps } from './input';
+
 export { Input, type InputProps };
 
 import { type LabelProps, Label } from './label';
+
 export { type LabelProps, Label };
 
-import { type SelectProps, InputSelect } from './select';
-export { type SelectProps, InputSelect };
+import { type SelectProps, Select } from './select';
+
+export { type SelectProps, Select };
 
 import {
 	type SelectContextProps,
@@ -38,7 +43,9 @@ export {
 };
 
 import { type TextAreaProps, TextArea } from './text-area';
+
 export { type TextAreaProps, TextArea };
 
 import { type InputWithProps, InputWith } from './with';
+
 export { type InputWithProps, InputWith };

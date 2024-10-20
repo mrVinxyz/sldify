@@ -1,82 +1,65 @@
-import { createEffect, createSignal, onMount } from 'solid-js';
+import { createContext, createEffect, createSignal, onMount, useContext } from 'solid-js';
 import type { View } from '../types';
-import { createForm, formContext, type FormContext } from './context';
+import { SetStoreFunction, createStore } from 'solid-js/store';
 
-/** The form data is a record of key-value pairs. */
 export type FormsData = Record<string, unknown>;
+export type FormStatus = 'initial' | 'validating' | 'error' | 'submitting' | 'success' | 'failure';
 
-/**
- * @param initial Form initial load.
- * @param error Failed form validation.
- * @param success Successful form submission.
- * @param failure Failed form submission.
- */
-export type FormStatus = 'initial' | 'error' | 'success' | 'failure';
+export type UpdateStoreFn<T> = (partialState: Partial<T> | ((prevState: T) => Partial<T>)) => void;
 
-/**
- * The properties for a form component.
- *
- * @template T - The type of the form data.
- */
+export type FormContext<T> = {
+	name: Readonly<string>;
+	state: T;
+	setState: SetStoreFunction<T>;
+	errors: FormErr;
+	setErrors: UpdateStoreFn<FormErr>;
+	status: () => FormStatus;
+	setStatus: (status: FormStatus) => void;
+	cleanStorage: () => void;
+};
+
+export const formContext = createContext<FormContext<unknown>>();
+
+export function useForm<T>(): FormContext<T> {
+	const ctx = useContext(formContext);
+	if (!ctx) throw new Error('useForm must be used within a Form component');
+	return ctx as FormContext<T>;
+}
+
 export type FormProps<T extends object, R> = {
-	/**
-	 * The name of the form.
-	 */
 	name: string;
-	/**
-	 * The initial state of the form
-	 *
-	 * @example
-	 * const formData = {
-	 *    name: "John Doe",
-	 *    username: "johndoe"
-	 * }
-	 */
-	initialState?: FormsData;
-	/**
-	 * The action to be performed on form submission.
-	 *
-	 * @param {FormsData} data - The form data to be submitted.
-	 * @returns {Promise<Response>} A promise that resolves to the response of the submission.
-	 *
-	 * @example
-	 * const submitAction = async (data: FormsData) => {
-	 *     return fetch("/api/form", {}).then((res) => res.json());
-	 * }
-	 */
-	onSubmit?: (data: FormsData | T) => Promise<R>;
-	/***/
-	onSubmitResponse?: (data: R) => void;
-	onSubmitError?: () => void; // TODO impl this feature
-	/**
-	 * A function to validate the form data.
-	 *
-	 * @param {FormsData | {}} values - The form data to be validated.
-	 * @returns {FormErr} The validation errors.
-	 */
-	validate?: (values: FormsData | T) => FormErr;
-	/**
-	 * Creates a persistent form state, storing the form data in the browser's session or local storage.
-	 */
+	initialState?: T;
+	onSubmit?: (data: T) => Promise<R>;
+	onSubmitResult?: (data: R) => void;
+	validate?: (values: T) => FormErr | undefined;
 	storage?: 'session' | 'local';
 };
 
-/**
- * Props for the `Form` component, defining the structure and behavior of the form.
- *
- * @template T - Represents the form's state type.
- */
-export type BaseFormProps<T extends object, R> = {
-	/**
-	 * Represents either the form context or the initial form props.
-	 * - `FormContextProps`: If the form context already exists.
-	 * - `FormProps<T>`: If the form is to be created.
-	 */
-	form: FormContext | FormProps<T, R>;
+const FormStorage = (storage: 'session' | 'local' | undefined): Storage | null =>
+	storage === 'session' ? sessionStorage : storage === 'local' ? localStorage : null;
 
-	/**
-	 * Components to be rendered within the form context.
-	 */
+export function createForm<T extends object, R>(props: FormProps<T, R>): FormContext<T> {
+	const [state, setState] = createStore<T>(props.initialState || ({} as T)),
+		[errors, setErrors] = createStore<FormErr>(),
+		[status, setStatus] = createSignal<FormStatus>('initial');
+
+	return {
+		state,
+		setState,
+		errors,
+		setErrors,
+		status,
+		setStatus,
+		cleanStorage: () => {
+			const storage = FormStorage(props.storage);
+			return storage?.removeItem(props.name);
+		},
+		...props,
+	};
+}
+
+export type BaseFormProps<T extends object, R> = {
+	form: FormContext<T> | FormProps<T, R>;
 	children: View;
 };
 
@@ -88,7 +71,6 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 	let allInputFields: Array<string> = [];
 
 	if (formEl.initialState) ctx.setState(formEl.initialState);
-
 
 	const storage =
 		formEl.storage === 'session'
@@ -103,15 +85,15 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 		const button = thisForm()?.querySelector('button[type="submit"]');
 		button ? button.setAttribute('disabled', 'true') : null;
 
-		const errors = formEl?.validate?.(ctx.state);
-		if (errors && Object.keys(errors).length > 0) {
-			ctx.setErrors(errors);
+		const validationErrors = formEl?.validate?.(ctx.state as T);
+		if (validationErrors && Object.keys(validationErrors).length > 0) {
+			ctx.setErrors(validationErrors);
 			return;
 		}
 
 		try {
-			formEl?.onSubmit?.(ctx.state).then(async (res: R) => {
-				formEl.onSubmitResponse?.(res);
+			formEl?.onSubmit?.(ctx.state as T).then(async (res: R) => {
+				formEl.onSubmitResult?.(res);
 				button ? button.removeAttribute('disabled') : null;
 			});
 		} catch (e) {
@@ -133,14 +115,14 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 
 	const storeFormData = () => {
 		const dataToStore = allInputFields.reduce((acc, field) => {
-			acc[field] = ctx.state[field];
+			acc[field] = ctx.state[field as keyof (FormsData | T)];
 			return acc;
 		}, {} as FormsData);
 
 		storage?.setItem(formEl.name, JSON.stringify(dataToStore));
 	};
 
-	const getStoredFormData = () => {
+	const storedFormData = () => {
 		const storedData = storage?.getItem(formEl.name);
 		if (storedData) ctx.setState(JSON.parse(storedData));
 	};
@@ -148,13 +130,13 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 	onMount(() => {
 		allInputFields = fieldNames();
 		validateInputNames(allInputFields);
-		getStoredFormData();
+		storedFormData();
 	});
 
 	createEffect(() => storeFormData());
 
 	return (
-		<formContext.Provider value={ctx}>
+		<formContext.Provider value={ctx as unknown as FormContext<unknown>}>
 			<form
 				ref={setThisForm}
 				id={`${formEl.name}Form`}
@@ -171,7 +153,7 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 
 export type FormErr = Record<string, string>;
 
-export function toFormErr<T>(obj: Partial<Record<keyof T, string[] | undefined>>): FormErr {
+export function formErr<T>(obj: Partial<Record<keyof T, string[] | undefined>>): FormErr {
 	const formErr: FormErr = {};
 
 	for (const key in obj) {

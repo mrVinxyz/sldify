@@ -1,19 +1,11 @@
-import type { ClassNames, View } from '../types';
+import type { ClassNames, OptChild, View } from '../types';
 
-export type LabelProps = ClassNames & {
-	/** The id of the input element this label is associated with. */
-	for: string;
-	/** The text content of the label. */
-	label: string;
-};
+export type LabelProps = ClassNames &
+	OptChild & {
+		for: string;
+		label: string;
+	};
 
-/**
- * Label component to render a label for an input element.
- *
- * @param {string} props.for - The id of the input element this label is associated with.
- * @param {string} props.label - The text content of the label.
- * @returns {View} - The rendered Label component.
- */
 export const Label = (props: LabelProps): View => {
 	return (
 		<label
@@ -23,7 +15,7 @@ export const Label = (props: LabelProps): View => {
 				props.className || '',
 			)}
 		>
-			{props.label}
+			{props.children || props.label}
 		</label>
 	);
 };

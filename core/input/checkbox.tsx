@@ -3,21 +3,43 @@ import { createContext, createSignal, splitProps, useContext } from 'solid-js';
 import type { ClassNames, PropAttr } from '../types';
 import { randomHash } from '../utils';
 import { InputGroup } from './group';
+import type { InputNamedValue } from './input';
 
 export type CheckboxContext = {
+	id: Readonly<string>;
+	value: () => string;
+	namedValue: () => InputNamedValue;
 	isChecked: () => boolean;
 	setChecked: (value: boolean) => void;
 	toggleCheck: () => void;
-	id: Readonly<string>;
 };
 
 const checkboxContext = createContext<CheckboxContext>();
 
 export const useCheckbox = () => {
 	const context = useContext(checkboxContext);
-	if (!context) throw new Error('useCheckboxContext must be used within a CheckboxProvider');
+	if (!context) throw new Error('useCheckboxContext must be used within a Checkbox');
 	return context;
 };
+
+export function createCheckbox(
+	name: string,
+	value: string,
+	id?: string,
+	checked = false,
+): CheckboxContext {
+	const [isChecked, setChecked] = createSignal(checked);
+	const toggleCheck = () => setChecked((prev) => !prev);
+
+	return {
+		id: id || 'checkbox'.concat(randomHash()),
+		value: () => value || '',
+		namedValue: () => ({ name: name, value: value }),
+		isChecked,
+		setChecked,
+		toggleCheck,
+	};
+}
 
 export const checkboxStyles = cva('rounded focus:ring-2 transition cursor-pointer', {
 	variants: {
@@ -51,7 +73,8 @@ export type CheckboxProps = ClassNames &
 		color?: 'blue' | 'red' | 'green';
 		disabled?: boolean;
 		checked?: boolean;
-		onCheck?: (value: boolean) => void;
+		value?: string;
+		onCheck?: (value: CheckboxContext) => void;
 	};
 
 export const Checkbox = (props: CheckboxProps) => {
@@ -63,67 +86,50 @@ export const Checkbox = (props: CheckboxProps) => {
 		'disabled',
 		'checked',
 		'onCheck',
+		'value',
 	]);
 
-	const [isChecked, setChecked] = createSignal(false);
-	const toggleCheck = () => setChecked((prev) => !prev);
-
-	const ctxValue = {
-		isChecked,
-		setChecked,
-		toggleCheck,
-		id: (prop.id || randomHash()).concat('-input'),
-	};
+	const ctxValue = createCheckbox(prop.name, prop.value || '', prop.id, prop.checked || false);
 
 	return (
 		<checkboxContext.Provider value={ctxValue}>
 			<input
 				{...others}
+				id={ctxValue.id}
 				name={prop.name}
 				type='checkbox'
-				checked={isChecked()}
+				checked={ctxValue.isChecked()}
 				class={checkboxStyles({
 					disabled: prop.disabled,
 					size: prop.size,
 					color: prop.color,
 				})}
 				onChange={() => {
-					toggleCheck();
-					prop.onCheck?.(isChecked());
+					ctxValue.toggleCheck();
+					prop.onCheck?.(ctxValue);
 				}}
+				value={prop.value}
 			/>
 		</checkboxContext.Provider>
 	);
 };
 
-export type CheckboxFieldProps = CheckboxProps & { label: string };
-
-export const CheckboxField = (props: CheckboxFieldProps) => {
-	const [prop, others] = splitProps(props, [
-		'name',
-		'id',
-		'size',
-		'color',
-		'disabled',
-		'checked',
-		'onCheck',
-		'className',
-		'label',
-	]);
+export const CheckboxField = (props: CheckboxProps & { label: string; size?: string }) => {
+	const [prop, others] = splitProps(props, ['className', 'label', 'id']);
+	const id = prop.id || 'checkbox-field'.concat(randomHash());
 
 	return (
 		<InputGroup
-			size={prop.size}
+			id={id.concat('-checkbox-field')}
+			size={props.size}
 			className={'flex items-center '.concat(prop.className || '')}
 		>
 			<Checkbox
-				name={prop.name}
-				checked={prop.checked}
-				onCheck={prop.onCheck}
+				id={id}
 				{...others}
 			/>
 			<label
-				for={prop.name}
+				for={id.concat('-checkbox')}
 				class={'ms-2 text-sm font-medium text-gray-800 flex items-center'}
 			>
 				{prop.label}

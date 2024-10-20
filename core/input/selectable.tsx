@@ -9,29 +9,18 @@ import {
 } from 'solid-js';
 import { randomHash } from '../utils';
 import { Input, type InputProps } from './input';
-import { InputGroup, type InputGroupProps, type InputGroupSize } from './group';
+import { InputGroup, type InputGroupProps, type InputGroupSizeVariant } from './group';
 import { Label } from './label';
 import { cva, type VariantProps } from 'class-variance-authority';
 import type { PropAttr, View } from '../types';
 
-/** The type of selected value. */
 export type SelectValue<V> = Record<string, V>;
 
-/**
- * Represents the props for the SelectContext component.
- *
- * @template T The type of the value.
- */
 export type SelectContextProps<V> = {
-	/** The value of the select input. */
 	value: () => SelectValue<V>;
-	/** Set the value of the select input. */
 	setValue: (value: SelectValue<V>) => void;
-	/** Check if the select input is open. */
 	open: () => boolean;
-	/** Set the open state of the select input. */
 	setOpen: (open: boolean) => void;
-	/** The id of the select input. */
 	id: Readonly<string>;
 };
 
@@ -96,11 +85,6 @@ export const SelectGroup = <V,>(props: InputGroupProps): View => {
 
 const SelectInputContext = createContext<SelectContextProps<unknown>>();
 
-/**
- * Represents an input component used in a select element.
- * @param {InputProps} props - The input props.
- * @returns {View} - The rendered input component.
- */
 export const SelectInput = (props: InputProps): View => {
 	const ctx = useSelect();
 
@@ -144,14 +128,6 @@ const optionMapStyles = cva('absolute z-1 w-full py-2 rounded-md border mt-1 bg-
 	},
 });
 
-/**
- * OptionMap is a functional component that renders a dropdown menu of options.
- *
- * @param {Object} props - The properties for the OptionMap component.
- * @param {View} props.children - The elements to be rendered as options in the dropdown menu.
- *
- * @returns {View} The rendered OptionMap component.
- */
 export const SelectOptionMap = (
 	props: { children: View } & VariantProps<typeof optionMapStyles>,
 ): View => {
@@ -198,13 +174,9 @@ export const SelectOptionMap = (
 	);
 };
 
-/** Represents the properties for the Option component. */
 export type SelectOptionProps<V> = {
-	/** The display name for the option. */
 	name: string;
-	/** The value for the option. */
 	value: V;
-	/** If the option is selected */
 	selected?: boolean;
 };
 
@@ -238,7 +210,7 @@ export type SelectableProps<V> = InputProps &
 		options: SelectOptionProps<V>[];
 		default?: SelectOptionProps<V>;
 		value?: string | number;
-		size?: InputGroupSize;
+		size?: InputGroupSizeVariant;
 	};
 
 export function Selectable<V>(props: SelectableProps<V>): View {

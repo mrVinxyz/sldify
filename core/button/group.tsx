@@ -1,26 +1,20 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { For, splitProps } from 'solid-js';
 import { Button, type ButtonProps } from './button';
 import type { ClassName } from '../types';
 
-export type ButtonGroupProps = VariantProps<typeof buttonGroupStyles> &
-	ButtonProps & {
-		buttons: ButtonProps[];
-		className?: ClassName;
-		size?: 'rec_sm' | 'rec_md' | 'rec_lg' | 'sqr_sm' | 'sqr_md' | 'sqr_lg';
-		color?:
-			| 'primary'
-			| 'secondary'
-			| 'success'
-			| 'danger'
-			| 'warning'
-			| 'alert'
-			| 'light'
-			| 'dark';
-		disabled?: boolean;
-		loading?: boolean;
-		onPress?: () => void;
-	};
+export type ButtonGroupProps = ButtonProps & {
+	buttons: ButtonProps[];
+	className?: ClassName;
+	size?: 'rec_sm' | 'rec_md' | 'rec_lg' | 'sqr_sm' | 'sqr_md' | 'sqr_lg';
+	color?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'alert' | 'light' | 'dark';
+	disabled?: boolean;
+	loading?: boolean;
+	onPress?: () => void;
+	layout?: ButtonGroupLayoutVariant;
+};
+
+export type ButtonGroupLayoutVariant = 'row' | 'col';
 
 const buttonGroupStyles = cva('', {
 	variants: {

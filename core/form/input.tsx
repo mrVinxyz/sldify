@@ -1,20 +1,21 @@
 import { Field } from './field';
-import { Label } from '../input';
+import {
+	InputFeedback,
+	type InputGroupSizeVariant,
+	Label,
+	type SelectProps,
+	type TextAreaProps,
+} from '../input';
 import { InputGroup } from '../input';
 import { Input } from '../input';
-import { InputHelper } from '../input';
 import { TextArea } from '../input';
-import { InputSelect } from '../input';
+import { Select } from '../input';
 import { InputWith } from '../input';
 import { Checkbox, type CheckboxProps } from '../input/checkbox';
 import type { View } from '../types';
-import {cva} from "class-variance-authority";
+import { cva } from 'class-variance-authority';
 
-/** The input field size.
- * @values xs=2; sm=4; md=6; lg=8; xl=10; full=12;
- * @usage `col-span-${size}`
- */
-export type FormInputSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+export type FormInputSizeVariant = InputGroupSizeVariant;
 
 export const formInputSize = cva('', {
 	variants: {
@@ -28,32 +29,18 @@ export const formInputSize = cva('', {
 		},
 	},
 	defaultVariants: {
-		size: 'md', // Default size if none is specified
+		size: 'md',
 	},
 });
 
-/**
- * Props for the FormInput component.
- */
 export type FormInputProps = {
-	/** The name of the input field. */
 	name: string;
-	/** The placeholder text for the input field. */
 	placeholder?: string;
-	/** The label text for the input field. */
 	label: string;
-	/** Optional mask function to apply on input event. */
 	mask?: (e: InputEvent) => void;
-	/** The input field size. Default `full`.*/
-	size?: FormInputSize;
+	size?: FormInputSizeVariant;
 };
 
-/**
- * FormInput component to render an input field with label and feedback.
- *
- * @param {FormInputProps} props - The properties for the FormInput component.
- * @returns {View} - The rendered FormInput component.
- */
 export function FormInput(props: FormInputProps): View {
 	return (
 		<Field name={props.name}>
@@ -72,11 +59,10 @@ export function FormInput(props: FormInputProps): View {
 							field.setValue((e.target as HTMLInputElement).value);
 							field.setErrors('');
 						}}
-						style={field.errors() ? 'error' : 'plain'}
-						className={`${field.errors() ? 'border-red-600 focus:ring-red-600 focus:border-red-600' : ''}`}
+						color={field.errors() ? 'error' : 'plain'}
 					/>
-					<InputHelper
-						type='error'
+					<InputFeedback
+						color='error'
 						msg={field.errors()}
 					/>
 				</InputGroup>
@@ -111,11 +97,11 @@ export function FormInputWith(props: FormInputWithProps): View {
 								field.setValue((e.target as HTMLInputElement).value);
 								field.setErrors('');
 							},
-							style: field.errors() ? 'error' : 'plain',
+							color: field.errors() ? 'error' : 'plain',
 						}}
 					/>
-					<InputHelper
-						type='error'
+					<InputFeedback
+						color='error'
 						msg={field.errors()}
 					/>
 				</InputGroup>
@@ -124,36 +110,8 @@ export function FormInputWith(props: FormInputWithProps): View {
 	);
 }
 
-/**
- * Props for the FormTextArea component.
- */
-export type FormTextAreaProps = {
-	/** The name of the textarea field. */
-	name: string;
-	/** The label text for the textarea field. */
-	label?: string;
-	/** The placeholder text for the textarea field. */
-	placeholder?: string;
-	/** The input field size.
-	 * @default w-full
-	 */
-	size?: FormInputSize;
-};
+export type FormTextAreaProps = FormInputProps & TextAreaProps;
 
-/**
- * FormTextArea component to render a textarea field with label and feedback.
- *
- * @param {FormTextAreaProps} props - The properties for the FormTextArea component.
- * @returns {View} - The rendered FormTextArea component.
- * @example
- * ```tsx
- * <FormTextArea
- *   name="message"
- *   label="Message"
- *   placeholder="Enter your message here..."
- *   />
- * ```
- */
 export function FormTextArea(props: FormTextAreaProps): View {
 	return (
 		<Field name={props.name}>
@@ -164,16 +122,18 @@ export function FormTextArea(props: FormTextAreaProps): View {
 						label={props.label || ''}
 					/>
 					<TextArea
+						{...props}
 						name={props.name}
 						placeholder={props.placeholder}
 						value={field.value()}
-						onChange={(e: Event) =>
-							field.setValue((e.target as HTMLTextAreaElement).value)
-						}
-						className={`${field.errors() ? 'border-red-600 focus:ring-red-600 focus:border-red-600' : ''}`}
+						onChange={(e: Event) => {
+							field.setValue((e.target as HTMLTextAreaElement).value);
+							field.setErrors('');
+						}}
+						color={field.errors() ? 'error' : 'plain'}
 					/>
-					<InputHelper
-						type='error'
+					<InputFeedback
+						color='error'
 						msg={field.errors()}
 					/>
 				</InputGroup>
@@ -182,73 +142,49 @@ export function FormTextArea(props: FormTextAreaProps): View {
 	);
 }
 
-/**
- * Props for the FormSelect component.
- */
-export type FormSelectProps = {
-	/** The name of the select field. */
-	name: string;
-	/** The label text for the select field. */
-	label: string;
-	/** The options for the select field. */
-	options: { name: string; value: string }[];
-	/** The default option for the select field. */
-	default?: { name: string; value: string };
-	/** The input field size. */
-	size?: FormInputSize;
-};
+export type FormSelectProps = FormInputProps & SelectProps;
 
-/**
- * FormSelect component to render a select field with label and feedback.
- *
- * @param {FormSelectProps} props - The properties for the FormSelect component.
- * @returns {View} - The rendered FormSelect component.
- * @example
- * ```tsx
- * <FormSelect
- *    name="color"
- *    label="Selectable a color"
- *    options={[
- *    	{ name: 'Red', value: '#ff0000' },
- *    	{ name: 'Green', value: '#00ff00' },
- *    ]}
- *    default={{ name: 'Selectable a color', value: '' }}
- * />
- *```
- */
 export function FormSelect(props: FormSelectProps): View {
 	return (
 		<Field<string> name={props.name}>
-			{(field) => (
-				<InputGroup size={props.size}>
-					<Label
-						for={props.name}
-						label={props.label}
-					/>
-					<InputSelect
-						name={props.name}
-						options={props.options}
-						defaultIndex={0}
-						value={field.value()}
-						onSelect={(v) => {
-							field.setValue(v.toString());
-						}}
-						style={field.errors() ? 'error' : 'plain'}
-					/>
-					<InputHelper
-						type='error'
-						msg={field.errors()}
-					/>
-				</InputGroup>
-			)}
+			{(field) => {
+				// const initialSelected = props.options[props.defaultIndex || 0];
+				// console.log(initialSelected);
+				// if (initialSelected.value !== '') {
+				// 	const val = initialSelected.value.toString();
+				// 	console.log(val);
+				// 	field.setValue(val);
+				// }
+
+				return (
+					<InputGroup size={props.size}>
+						<Label
+							for={props.name}
+							label={props.label}
+						/>
+						<Select
+							name={props.name}
+							options={props.options}
+							defaultIndex={0}
+							value={field.value()}
+							onSelect={(v) => {
+								field.setValue(v.toString());
+								field.setErrors('');
+							}}
+							color={field.errors() ? 'error' : 'plain'}
+						/>
+						<InputFeedback
+							color='error'
+							msg={field.errors()}
+						/>
+					</InputGroup>
+				);
+			}}
 		</Field>
 	);
 }
 
-type FormCheckboxProps = CheckboxProps & {
-	label: string;
-	size?: FormInputSize;
-};
+type FormCheckboxProps = FormInputProps & CheckboxProps;
 
 export function FormCheckbox(props: FormCheckboxProps) {
 	return (
@@ -261,7 +197,7 @@ export function FormCheckbox(props: FormCheckboxProps) {
 					/>
 					<Checkbox
 						name={props.name}
-						onCheck={(v) => field.setValue(v)}
+						onCheck={(v) => field.setValue(v.isChecked())}
 					/>
 				</InputGroup>
 			)}

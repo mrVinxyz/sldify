@@ -142,5 +142,4 @@ export type RangeSize<
  * //   name: string;
  * // }
  */
-export type OmitProp<T, K extends PropertyKey> =
-	{ [P in keyof T as Exclude<P, K>]: T[P] }
+export type OmitProp<T, K extends PropertyKey> = { [P in keyof T as Exclude<P, K>]: T[P] };

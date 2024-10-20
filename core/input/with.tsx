@@ -1,9 +1,9 @@
-import type { JSX } from 'solid-js';
 import { Input, type InputProps } from './input';
+import type { View } from '../types';
 
 export type InputWithProps = {
-	leading?: JSX.Element;
-	trailing?: JSX.Element;
+	leading?: View;
+	trailing?: View;
 	input: InputProps;
 };
 

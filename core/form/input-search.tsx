@@ -1,66 +1,44 @@
+// EXPERIMENTAL
+
 import {
 	createContext,
 	createEffect,
 	createResource,
 	createSignal,
 	For,
-	type JSX,
 	onCleanup,
 	Show,
 	useContext,
 } from 'solid-js';
-import { formInputSize, type FormInputSize } from './input';
-import { Field } from './field';
-import { Input, InputHelper, Label } from '../input';
-import type { ClassNames } from '../types';
-import { Collapsible, CollapsibleContent, CollapsibleControl } from '../collapsible/collapsible';
+import { type FormInputProps, formInputSize, type FormInputSizeVariant } from './input';
+import { Field, type FieldContextProps } from './field';
+import { Input, InputFeedback, Label } from '../input';
+import type { ClassNames, View } from '../types';
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleControl,
+	createCollapsible,
+	useCollapsible,
+} from '../collapsible/collapsible';
 import { Button } from '../button';
 
-/**
- * Type representing search parameters as a record of key-value pairs.
- */
 export type SearchParam = Record<string, string>;
 
-/**
- * Type representing a function that fetches searchable data based on search parameters.
- *
- * @template T - The type of the data being fetched.
- * @param {SearchParam} searchParam - The search parameters.
- * @returns {Promise<T[]>} - A promise that resolves to an array of fetched data.
- */
 export type SearchableFetchFn<T> = (searchParam: SearchParam) => Promise<T[]>;
 
-/**
- * Props for the Searchable component.
- *
- * @template T - The type of the data being searched.
- */
-export type SearchableProps<T> = ClassNames & {
-	/** The name of the searchable field. */
-	name: string;
-	/** The label for the searchable field. */
-	label: string;
-	/** The placeholder text for the searchable field. */
-	placeholder?: string;
-	/** The key to display from the fetched data. */
-	displayKey: keyof T;
-	/** The key to search by in the fetched data. */
-	searchKey: keyof T | string;
-	/** The function to fetch searchable data. */
-	resource: SearchableFetchFn<T>;
-	/** The size of the list to display. */
-	listSize?: 5 | 10;
-	/** The fallback action if no data is found. */
-	fallback?: string | (() => JSX.Element) | JSX.Element;
-	/** Extend the functionality of the component by adding custom actions (e.g., a button or modal). */
-	actionOption?: JSX.Element;
-	/** The time to wait before triggering the search. */
-	awaitTime?: number;
-	/** The input field size.
-	 * @default w-full
-	 */
-	size?: FormInputSize;
-};
+export type SearchableProps<T> = FormInputProps &
+	ClassNames & {
+		placeholder?: string;
+		displayKey: keyof T;
+		searchKey: keyof T | string;
+		resource: SearchableFetchFn<T>;
+		listSize?: 5 | 10;
+		fallback?: string | (() => View) | View;
+		actionOption?: View;
+		awaitTime?: number;
+		size?: FormInputSizeVariant;
+	};
 
 /**
  * Type representing the context properties for the searchable component.
@@ -90,9 +68,9 @@ export function useSearchable(): SearchableContextProps {
  *
  * @template T - The type of the data being searched.
  * @param {SearchableProps<T>} props - The properties for the FormInputSearch component.
- * @returns {JSX.Element} - The rendered FormInputSearch component.
+ * @returns {View} - The rendered FormInputSearch component.
  */
-export function FormInputSearch<T>(props: SearchableProps<T>): JSX.Element {
+export function FormInputSearch<T>(props: SearchableProps<T>): View {
 	const [searchParam, setSearchParam] = createSignal<SearchParam>();
 	const [resourceValues, { mutate }] = createResource(searchParam, props.resource);
 	const [showList, setShowList] = createSignal(false);
@@ -184,11 +162,36 @@ export function FormInputSearch<T>(props: SearchableProps<T>): JSX.Element {
 		window.removeEventListener('keydown', handleKeyNavigation);
 	});
 
+	const SelectSearchItemButton = (props: {
+		field: FieldContextProps<unknown>;
+		displayKey: keyof T;
+		value: T;
+	}) => (
+		<Button
+			color='light'
+			size='none'
+			className='block w-full text-start p-2 hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none'
+			onPress={() => {
+				handleSelectOnClick(props.value);
+				props.field.setValue(props.value);
+				const collapsible = useCollapsible();
+				collapsible.toggle();
+			}}
+		>
+			{props.value[props.displayKey] as string}
+		</Button>
+	);
+
+	const collapsible = createCollapsible();
+
 	return (
 		<Field name={props.name}>
 			{(field) => (
 				<InputSelectSearchContext.Provider value={{}}>
-					<Collapsible className={formInputSize({ size: props.size })}>
+					<Collapsible
+						ctx={collapsible}
+						className={formInputSize({ size: props.size })}
+					>
 						<CollapsibleControl
 							className={'w-full'}
 							onPress={triggerSearch}
@@ -203,9 +206,9 @@ export function FormInputSearch<T>(props: SearchableProps<T>): JSX.Element {
 								value={handleSelectedValue()}
 								placeholder={props.placeholder}
 							/>
-							<InputHelper
+							<InputFeedback
 								msg={field.errors()}
-								type={'error'}
+								color={'error'}
 							/>
 						</CollapsibleControl>
 
@@ -248,18 +251,19 @@ export function FormInputSearch<T>(props: SearchableProps<T>): JSX.Element {
 											each={resourceValues()}
 											fallback={parseFallback()}
 										>
-											{(v) => (
+											{(value) => (
 												<li>
 													<Button
 														color='light'
 														size='none'
 														className='block w-full text-start p-2 hover:bg-gray-100 focus:bg-gray-100 rounded-lg focus:outline-none'
 														onPress={() => {
-															handleSelectOnClick(v);
-															field.setValue(v);
+															handleSelectOnClick(value);
+															field.setValue(value);
+															collapsible.toggle();
 														}}
 													>
-														{v[props.displayKey] as string}
+														{value[props.displayKey] as string}
 													</Button>
 												</li>
 											)}

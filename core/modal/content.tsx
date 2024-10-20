@@ -1,27 +1,18 @@
 import { createEffect, type JSX, Show } from 'solid-js';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { Portal } from 'solid-js/web';
 import { useModal } from './context';
 import type { ClassName } from '../types';
 
-/**
- * Properties for configuring the modal content.
- * @param children - JSX element that represents the modal's content.
- * @param size - Defines the width of the modal. Defaults to 'md'.
- *  - 'sm': Small modal size.
- *  - 'md': Medium modal size.
- *  - 'lg': Large modal size.
- *  - 'xl': Extra large modal size.
- * @param position - Specifies the vertical positioning of the modal. Defaults to 'middle'.
- *  - 'top': Aligns the modal near the top of the view.
- *  - 'bottom': Aligns the modal near the bottom of the view.
- *  - 'middle': Centers the modal vertically in the view.
- */
-export type ModalContentProps = VariantProps<typeof modalContentClass> & {
+export type ModalContentProps = {
 	children: JSX.Element;
-	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+	size?: ModalContentSizeVariant;
+	position?: ModalContentPositionVariant;
 	className?: ClassName;
 };
+
+export type ModalContentSizeVariant = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type ModalContentPositionVariant = 'top' | 'bottom' | 'middle';
 
 const modalContentClass = cva('relative p-4 w-full max-h-full', {
 	variants: {
@@ -44,12 +35,6 @@ const modalContentClass = cva('relative p-4 w-full max-h-full', {
 	},
 });
 
-/**
- * Component to render everything which will be shown within a modal.
- * - The content is shown based on the current modal context state.
- * - It appends the modal backdrop to the body, ensuring it overlays the entire screen.
- * @param props - Props to define size, position, and modal content.
- */
 export const ModalContent = (props: ModalContentProps) => {
 	const modalCtx = useModal();
 
@@ -62,7 +47,7 @@ export const ModalContent = (props: ModalContentProps) => {
 	const Backdrop = () => <div class={'fixed inset-0 h-screen w-screen bg-black opacity-20'} />;
 
 	createEffect(() => {
-		if (modalCtx.isShown()) document.getElementById(modalCtx.modalId)?.focus();
+		if (modalCtx.isShown()) document.getElementById(modalCtx.id)?.focus();
 	});
 
 	return (
@@ -71,7 +56,7 @@ export const ModalContent = (props: ModalContentProps) => {
 				<div
 					class={modalWrapperClass()}
 					tabindex={-1}
-					id={modalCtx.modalId}
+					id={modalCtx.id}
 					role='dialog'
 					aria-modal='true'
 				>

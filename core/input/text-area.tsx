@@ -1,31 +1,12 @@
-import { type JSX, splitProps } from 'solid-js';
-import { inputStyles } from './input';
+import { splitProps } from 'solid-js';
+import { type InputProps, inputStyles } from './input';
+import type { OmitProp, View } from '../types';
 
-/**
- * Props for the TextArea component.
- */
-export type TextAreaProps = {
-	/** The name of the textarea field. */
-	name: string;
-	/** The placeholder text for the textarea field. */
-	placeholder?: string;
-	/** The number of rows for the textarea field. */
+export type TextAreaProps = OmitProp<InputProps, 'onEnter'> & {
 	rows?: number;
-	/** Whether the textarea field is disabled. */
-	disabled?: boolean;
-	/** Optional additional class names for the input field. */
-	className?: string;
-	/** Additional properties for the textarea element. */
-	[key: string]: unknown;
 };
 
-/**
- * TextArea component to render a textarea field.
- *
- * @param {TextAreaProps} props - The properties for the TextArea component.
- * @returns {JSX.Element} - The rendered TextArea component.
- */
-export const TextArea = (props: TextAreaProps): JSX.Element => {
+export const TextArea = (props: TextAreaProps): View => {
 	const [prop, others] = splitProps(props, [
 		'name',
 		'placeholder',

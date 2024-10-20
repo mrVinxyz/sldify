@@ -1,31 +1,14 @@
 import { type JSX, createEffect, onCleanup, createMemo } from 'solid-js';
 import { createModal, ModalContext, type ModalContextProps } from './context';
+import type { OptChild, OptComponentCtx, View } from '../types';
 
-/**
- * Properties for rendering a modal component.
- * @param children - The content to be rendered inside the modal.
- * @param ctx - Optional. A specific modal context to control the modal state.
- * If not provided, a new modal context is created.
- */
 export type ModalProps = {
-	id?: string;
+	id?: Readonly<string>;
 	onOpen?: () => void;
 	onClose?: () => void;
 };
 
-/**
- * Modal component to manage the visibility and behavior of a modal dialog.
- * - Renders the modal content based on the provided or default context.
- * - Handles outside clicks and the Escape key to close the modal.
- *
- * @param props - Accepts `ModalProps` to define the modal's content and optional modal context.
- */
-export const Modal = (
-	props: ModalProps & {
-		ctx?: ModalContextProps;
-		children: JSX.Element;
-	},
-): JSX.Element => {
+export function Modal(props: ModalProps & OptChild & OptComponentCtx<ModalContextProps>): View {
 	const ctx = props.ctx || createModal(props.id, props.onOpen, props.onClose);
 
 	let modalContentTarget: HTMLElement | null;
@@ -62,4 +45,4 @@ export const Modal = (
 	onCleanup(() => rmEvents);
 
 	return <ModalContext.Provider value={ctx}>{props.children}</ModalContext.Provider>;
-};
+}
