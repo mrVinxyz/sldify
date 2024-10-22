@@ -142,44 +142,33 @@ export function FormTextArea(props: FormTextAreaProps): View {
 	);
 }
 
-export type FormSelectProps = FormInputProps & SelectProps;
+export type FormSelectProps<T> = FormInputProps & SelectProps<T>;
 
-export function FormSelect(props: FormSelectProps): View {
+export function FormSelect<T>(props: FormSelectProps<T>): View {
 	return (
-		<Field<string> name={props.name}>
-			{(field) => {
-				// const initialSelected = props.options[props.defaultIndex || 0];
-				// console.log(initialSelected);
-				// if (initialSelected.value !== '') {
-				// 	const val = initialSelected.value.toString();
-				// 	console.log(val);
-				// 	field.setValue(val);
-				// }
-
-				return (
-					<InputGroup size={props.size}>
-						<Label
-							for={props.name}
-							label={props.label}
-						/>
-						<Select
-							name={props.name}
-							options={props.options}
-							defaultIndex={0}
-							value={field.value()}
-							onSelect={(v) => {
-								field.setValue(v.toString());
-								field.setErrors('');
-							}}
-							color={field.errors() ? 'error' : 'plain'}
-						/>
-						<InputFeedback
-							color='error'
-							msg={field.errors()}
-						/>
-					</InputGroup>
-				);
-			}}
+		<Field name={props.name}>
+			{(field) => (
+				<InputGroup size={props.size}>
+					<Label
+						for={props.name}
+						label={props.label}
+					/>
+					<Select
+						name={props.name}
+						options={props.options}
+						defaultIndex={0}
+						onSelect={(v) => {
+							field.setValue(v);
+							field.setErrors('');
+						}}
+						color={field.errors() ? 'error' : 'plain'}
+					/>
+					<InputFeedback
+						color='error'
+						msg={field.errors()}
+					/>
+				</InputGroup>
+			)}
 		</Field>
 	);
 }
