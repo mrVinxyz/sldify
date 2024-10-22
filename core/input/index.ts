@@ -46,6 +46,6 @@ import { type TextAreaProps, TextArea } from './text-area';
 
 export { type TextAreaProps, TextArea };
 
-import { type InputWithProps, InputWith } from './with';
+import { type InputWithProps, InputWith } from './input-with';
 
 export { type InputWithProps, InputWith };
