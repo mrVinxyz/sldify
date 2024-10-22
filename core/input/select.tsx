@@ -3,12 +3,10 @@ import {
 	createEffect,
 	createSignal,
 	For,
-	type JSX,
 	splitProps,
-	createMemo,
 } from 'solid-js';
 import { type InputColorVariant, inputStyles } from './input';
-import type { ClassNames, PropAttr, View } from '../types';
+import type { ClassNames, PropAttr } from '../types';
 
 const SelectContext = createContext();
 
