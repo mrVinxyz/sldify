@@ -143,3 +143,19 @@ export type RangeSize<
  * // }
  */
 export type OmitProp<T, K extends PropertyKey> = { [P in keyof T as Exclude<P, K>]: T[P] };
+
+/**
+ * A utility type that extracts the value types of an object.
+ *
+ * @template T - The object type from which to extract value types.
+ *
+ * @example
+ * // Given a type of User
+ * type User = {
+ *   id: number;
+ *   name: string;
+ * };
+ *
+ * type UserValue = ValueOf<User>; // Resulting type: number | string
+ */
+export type ValueOf<T> = T[keyof T];
