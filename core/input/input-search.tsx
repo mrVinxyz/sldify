@@ -5,9 +5,9 @@ import { Select, type SelectProps } from './select';
 import { cva } from 'class-variance-authority';
 import { splitProps } from 'solid-js';
 
-type InputSearchProps = InputProps &
+type InputSearchProps<T> = InputProps<T> &
 	ClassNames & {
-		onSearch?: (ctx: InputContext) => void;
+		onSearch?: (ctx: InputContext<T>) => void;
 		size?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'none';
 		inputClass?: ClassName;
 		btnClass?: ClassName;
@@ -29,7 +29,7 @@ const inputSearchSizeStyles = cva('relative', {
 	},
 });
 
-export const InputSearch = (props: InputSearchProps) => {
+export const InputSearch =<T,> (props: InputSearchProps<T>) => {
 	const [prop, others] = splitProps(props, [
 		'className',
 		'inputClass',
@@ -37,7 +37,7 @@ export const InputSearch = (props: InputSearchProps) => {
 		'size',
 		'onSearch',
 	]);
-	const inputCtx = createInput(others.name);
+	const inputCtx = createInput<T>(others.name);
 
 	return (
 		<div class={inputSearchSizeStyles({ size: prop.size }).concat(' ', prop.className || '')}>
@@ -77,7 +77,7 @@ export const InputSearch = (props: InputSearchProps) => {
 };
 
 export const InputSearchSelect = <T,>(props: {
-	search: InputSearchProps;
+	search: InputSearchProps<T>;
 	select: SelectProps<T>;
 }) => {
 	return (

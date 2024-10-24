@@ -1,8 +1,8 @@
 import { createContext, createEffect, createSignal, onMount, useContext } from 'solid-js';
-import type { View } from '../types';
-import { SetStoreFunction, createStore } from 'solid-js/store';
+import type { ValueOf, View } from '../types';
+import { type SetStoreFunction, createStore } from 'solid-js/store';
 
-export type FormsData = Record<string, unknown>;
+export type FormsData<T> = Record<string, ValueOf<T>>;
 export type FormStatus = 'initial' | 'validating' | 'error' | 'submitting' | 'success' | 'failure';
 
 export type UpdateStoreFn<T> = (partialState: Partial<T> | ((prevState: T) => Partial<T>)) => void;
@@ -39,10 +39,11 @@ const FormStorage = (storage: 'session' | 'local' | undefined): Storage | null =
 	storage === 'session' ? sessionStorage : storage === 'local' ? localStorage : null;
 
 export function createForm<T extends object, R>(props: FormProps<T, R>): FormContext<T> {
+	console.log(props.initialState)
 	const [state, setState] = createStore<T>(props.initialState || ({} as T)),
 		[errors, setErrors] = createStore<FormErr>(),
 		[status, setStatus] = createSignal<FormStatus>('initial');
-
+	console.log(state)
 	return {
 		state,
 		setState,
@@ -82,21 +83,30 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 	const handleSubmit = (e: Event) => {
 		e.preventDefault();
 
-		const button = thisForm()?.querySelector('button[type="submit"]');
-		button ? button.setAttribute('disabled', 'true') : null;
-
+		ctx.setStatus('validating');
 		const validationErrors = formEl?.validate?.(ctx.state as T);
+
 		if (validationErrors && Object.keys(validationErrors).length > 0) {
+			ctx.setStatus('error');
 			ctx.setErrors(validationErrors);
 			return;
 		}
 
+		const button = thisForm()?.querySelector('button[type="submit"]');
+		button ? button.setAttribute('disabled', 'true') : null;
+
 		try {
+			ctx.setStatus('submitting');
 			formEl?.onSubmit?.(ctx.state as T).then(async (res: R) => {
 				formEl.onSubmitResult?.(res);
 				button ? button.removeAttribute('disabled') : null;
+
+				ctx.setStatus('success');
+				ctx.cleanStorage();
 			});
 		} catch (e) {
+			ctx.setStatus('failure');
+			button ? button.removeAttribute('disabled') : null;
 			throw new Error(`Error submitting form: ${e}`);
 		}
 	};
@@ -115,16 +125,25 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 
 	const storeFormData = () => {
 		const dataToStore = allInputFields.reduce((acc, field) => {
-			acc[field] = ctx.state[field as keyof (FormsData | T)];
+			// TODO FIX THIS
+			// @ts-ignore
+			acc[field] = ctx.state[field as keyof T];
 			return acc;
-		}, {} as FormsData);
+		}, {} as T);
 
 		storage?.setItem(formEl.name, JSON.stringify(dataToStore));
 	};
 
 	const storedFormData = () => {
 		const storedData = storage?.getItem(formEl.name);
+		try {
+			console.log(JSON.parse(storedData || ''));
+		} catch (e) {}
 		if (storedData) ctx.setState(JSON.parse(storedData));
+	};
+
+	const resetOnSuccess = () => {
+		if (ctx.status() === 'success') setTimeout(() => ctx.setStatus('initial'), 1000);
 	};
 
 	onMount(() => {
@@ -134,6 +153,7 @@ export function Form<T extends object, R>(props: BaseFormProps<T, R>): View {
 	});
 
 	createEffect(() => storeFormData());
+	createEffect(() => resetOnSuccess());
 
 	return (
 		<formContext.Provider value={ctx as unknown as FormContext<unknown>}>

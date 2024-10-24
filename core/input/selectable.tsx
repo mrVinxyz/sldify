@@ -85,7 +85,7 @@ export const SelectGroup = <V,>(props: InputGroupProps): View => {
 
 const SelectInputContext = createContext<SelectContextProps<unknown>>();
 
-export const SelectInput = (props: InputProps): View => {
+export const SelectInput = <T,>(props: InputProps<T>): View => {
 	const ctx = useSelect();
 
 	const handleKeyNavigation = (e: KeyboardEvent) => {
@@ -148,8 +148,7 @@ export const SelectOptionMap = (
 			const contentRect = el().getBoundingClientRect();
 			const spaceOnTop = contentRect.top;
 			const spaceOnBottom = window.innerHeight - contentRect.bottom;
-			console.log(spaceOnTop, spaceOnBottom);
-			console.log(el());
+
 			if (spaceOnTop <= 0) {
 				storedPosition = 'top';
 			} else if (spaceOnBottom <= 0) {
@@ -192,7 +191,6 @@ export const SelectOption = <V,>(props: SelectOptionProps<V>): View => {
 				onClick={() => {
 					ctx.setOpen(false);
 					ctx.setValue({ name: props.name, value: props.value });
-					console.log(ctx.value());
 				}}
 				class={
 					'p-2 relative w-full text-left focus:outline-none focus:ring-2 focus:ring-blue-600'
@@ -204,7 +202,7 @@ export const SelectOption = <V,>(props: SelectOptionProps<V>): View => {
 	);
 };
 
-export type SelectableProps<V> = InputProps &
+export type SelectableProps<V> = InputProps<V> &
 	PropAttr & {
 		label?: string;
 		options: SelectOptionProps<V>[];

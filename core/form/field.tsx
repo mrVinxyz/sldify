@@ -1,14 +1,12 @@
 import { createContext, createEffect, createMemo, createSignal, useContext } from 'solid-js';
-import { type FormsData, useForm } from './form';
+import { type FormContext, useForm } from './form';
 import type { View } from '../types';
-
-export type FieldValue<T> = T;
 
 export type FieldErr = string;
 
 export type FieldContextProps<T> = {
-	value: () => FieldValue<T>;
-	setValue: (value: FieldValue<T>) => void;
+	value: () => T | undefined;
+	setValue: (value: T | undefined) => void;
 	errors: () => FieldErr;
 	setErrors: (errors: FieldErr) => void;
 };
@@ -22,17 +20,17 @@ export function useField<T>(): FieldContextProps<T> {
 }
 
 export function createField<T>(name: string): FieldContextProps<T> {
-	const [value, setValue] = createSignal<FieldValue<T>>(undefined as T);
+	const [value, setValue] = createSignal<T | undefined>();
 	const [errors, setErrors] = createSignal<FieldErr>('');
 	let wasModified = false;
 
-	const formCtx = useForm();
+	const formCtx = useForm<Record<string, T>>();
 
 	const updateFormData = () => {
 		const val = createMemo(() => value());
 		if ((val() === undefined || val() === '') && !wasModified) return;
 
-		formCtx?.setState((prevData: FormsData) => ({
+		formCtx?.setState((prevData: Record<string, T>) => ({
 			...prevData,
 			[name]: val(),
 		}));
@@ -46,9 +44,10 @@ export function createField<T>(name: string): FieldContextProps<T> {
 	};
 
 	const updateFieldVal = () => {
-		const val = formCtx.state[name];
-		if (val) {
+		const val: T | undefined = formCtx.state[name] as T | undefined;
+		if (val !== undefined) {
 			wasModified = true;
+			// TODO figure out how to fix type
 			// @ts-ignore
 			setValue(val);
 		}

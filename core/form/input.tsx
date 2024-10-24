@@ -1,4 +1,4 @@
-import { Field } from './field';
+import { Field, type FieldContextProps } from './field';
 import {
 	InputFeedback,
 	type InputGroupSizeVariant,
@@ -14,6 +14,7 @@ import { InputWith } from '../input';
 import { Checkbox, type CheckboxProps } from '../input/checkbox';
 import type { View } from '../types';
 import { cva } from 'class-variance-authority';
+import { createEffect } from 'solid-js';
 
 export type FormInputSizeVariant = InputGroupSizeVariant;
 
@@ -41,25 +42,30 @@ export type FormInputProps = {
 	size?: FormInputSizeVariant;
 };
 
-export function FormInput(props: FormInputProps): View {
+export function FormInput<T>(props: FormInputProps & { type?: 'text' | 'number' }): View {
 	return (
 		<Field name={props.name}>
-			{(field) => (
+			{(field: FieldContextProps<T>) => (
 				<InputGroup size={props.size}>
 					<Label
 						for={props.name}
 						label={props.label}
 					/>
 					<Input
+						type={props.type}
 						name={props.name}
 						placeholder={props.placeholder}
 						value={field.value()}
-						onInput={(e: InputEvent) => props.mask?.(e)}
-						onChange={(e: Event) => {
-							field.setValue((e.target as HTMLInputElement).value);
-							field.setErrors('');
+						onInput={(e: InputEvent) => {
+							props.mask?.(e);
+
+							const value = (e.target as HTMLInputElement).value;
+							const coercedValue = coerceValue<T>(value, props.type);
+							field.setValue(coercedValue);
 						}}
+						onChange={() => field.setErrors('')}
 						color={field.errors() ? 'error' : 'plain'}
+						sync={field.value}
 					/>
 					<InputFeedback
 						color='error'
@@ -70,6 +76,7 @@ export function FormInput(props: FormInputProps): View {
 		</Field>
 	);
 }
+
 
 type FormInputWithProps = FormInputProps & {
 	leading?: View;
@@ -147,28 +154,32 @@ export type FormSelectProps<T> = FormInputProps & SelectProps<T>;
 export function FormSelect<T>(props: FormSelectProps<T>): View {
 	return (
 		<Field name={props.name}>
-			{(field) => (
-				<InputGroup size={props.size}>
-					<Label
-						for={props.name}
-						label={props.label}
-					/>
-					<Select
-						name={props.name}
-						options={props.options}
-						defaultIndex={0}
-						onSelect={(v) => {
-							field.setValue(v);
-							field.setErrors('');
-						}}
-						color={field.errors() ? 'error' : 'plain'}
-					/>
-					<InputFeedback
-						color='error'
-						msg={field.errors()}
-					/>
-				</InputGroup>
-			)}
+			{(field) => {
+				createEffect(() => console.log(field.value()));
+				return (
+					<InputGroup size={props.size}>
+						<Label
+							for={props.name}
+							label={props.label}
+						/>
+						<Select
+							name={props.name}
+							options={props.options}
+							sync={field.value}
+							//selected={field.value}
+							onSelect={(v) => {
+								field.setValue(v);
+								field.setErrors('');
+							}}
+							color={field.errors() ? 'error' : 'plain'}
+						/>
+						<InputFeedback
+							color='error'
+							msg={field.errors()}
+						/>
+					</InputGroup>
+				);
+			}}
 		</Field>
 	);
 }
@@ -192,4 +203,9 @@ export function FormCheckbox(props: FormCheckboxProps) {
 			)}
 		</Field>
 	);
+}
+
+function coerceValue<T>(value: string, type?: string): T {
+	if (type === 'number') return Number.parseFloat(value) as T;
+	return value as T;
 }
