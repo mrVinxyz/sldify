@@ -1,4 +1,4 @@
-import { type JSX, createEffect, onCleanup, createMemo } from 'solid-js';
+import { createEffect, onCleanup, createMemo } from 'solid-js';
 import { createModal, ModalContext, type ModalContextProps } from './context';
 import type { OptChild, OptComponentCtx, View } from '../types';
 
@@ -9,7 +9,7 @@ export type ModalProps = {
 };
 
 export function Modal(props: ModalProps & OptChild & OptComponentCtx<ModalContextProps>): View {
-	const ctx = props.ctx || createModal(props.id, props.onOpen, props.onClose);
+	const ctx = props.ctx || createModal(props);
 
 	let modalContentTarget: HTMLElement | null;
 

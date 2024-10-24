@@ -1,5 +1,6 @@
 import { createContext, createSignal, useContext } from 'solid-js';
 import { randomHash } from '../utils';
+import type { ModalProps } from './modal';
 
 export type ModalState = 'shown' | 'hidden';
 
@@ -17,13 +18,10 @@ export const ModalContext = createContext<ModalContextProps>();
 
 const modalStack: ModalContextProps[] = [];
 
-export function createModal(
-	id: string = randomHash(),
-	onOpen?: () => void,
-	onClose?: () => void,
-): ModalContextProps {
+export function createModal(props?: ModalProps): ModalContextProps {
 	const [state, setState] = createSignal<ModalState>('hidden');
 	const [isShown, isHidden] = [() => state() === 'shown', () => state() === 'hidden'];
+	const modalId = props?.id || randomHash();
 
 	const open = () => {
 		const currentModal = modalStack.at(-1);
@@ -37,19 +35,19 @@ export function createModal(
 			close,
 			isShown,
 			isHidden,
-			id,
+			id: modalId,
 		});
-		onOpen?.();
+		props?.onOpen?.();
 	};
 
 	const close = () => {
 		modalStack.pop()?.setState('hidden');
 
 		modalStack.at(-1)?.setState('shown');
-		onClose?.();
+		props?.onClose?.();
 	};
 
-	return { state, setState, open, close, isShown, isHidden, id };
+	return { state, setState, open, close, isShown, isHidden, id: modalId };
 }
 
 export function useModal(): ModalContextProps {
