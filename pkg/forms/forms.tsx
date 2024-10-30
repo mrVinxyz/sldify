@@ -80,7 +80,6 @@ function createForm<T>(props: FormProps<T>): FormContext<T> {
 	const [isValid, setIsValid] = createSignal(false);
 
 	const validate = (): boolean => {
-		console.log('calling validate')
 		try {
 			setStatus('validating');
 
@@ -95,7 +94,6 @@ function createForm<T>(props: FormProps<T>): FormContext<T> {
 			const hasErrors = Object.keys(validationErrors).length > 0;
 			setStatus(hasErrors ? 'error' : 'initial');
 			setIsValid(!hasErrors);
-			console.log("hasErrors", hasErrors)
 
 			return !hasErrors;
 		} catch (error) {
@@ -108,10 +106,8 @@ function createForm<T>(props: FormProps<T>): FormContext<T> {
 		if (status() === 'submitting' || status() === 'validating') {
 			return;
 		}
-		console.log(isValid());
-		if(!isValid()) {
-			return;
-		}
+
+		if (!isValid()) return;
 
 		try {
 			setStatus('submitting');
