@@ -1,34 +1,33 @@
 {
-  "name": "sldify",
-  "version": "0.0.1",
-  "type": "module",
-  "module": "./dist/std-component.js",
-  "exports": {
-    ".": {
-      "import": "./dist/std-component.js"
+    "name": "sldify",
+    "version": "0.0.1",
+    "type": "module",
+    "module": "./dist/std-component.js",
+    "exports": {
+        ".": {
+            "import": "./dist/std-component.js"
+        }
+    },
+    "scripts": {
+        "fmt": "npx @biomejs/biome format --write ./pkg",
+        "lint": "npx @biomejs/biome lint ./pkg",
+        "build:pkg": "pnpm --filter ./pkg run build",
+        "dev:doc": "pnpm --filter  ./doc run dev"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "1.8.3",
+        "@tailwindcss/forms": "^0.5.7",
+        "@types/node": "^22.5.4",
+        "autoprefixer": "^10.4.17",
+        "postcss": "^8.4.33",
+        "tailwindcss": "^3.4.1",
+        "vite": "^5.4.8",
+        "vite-plugin-solid": "^2.10.2"
+    },
+    "dependencies": {
+        "class-variance-authority": "^0.7.0",
+        "sldify": "file:",
+        "solid-js": "^1.8.18",
+        "@solidjs/router": "^0.13.5"
     }
-  },
-  "scripts": {
-    "fmt": "npx @biomejs/biome format --write core",
-    "lint": "npx @biomejs/biome lint core",
-    "build:core": "pnpm --filter ./core run build",
-    "dev:doc": "pnpm --filter ./doc run dev",
-    "watch": "vite build --watch"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.8.3",
-    "@tailwindcss/forms": "^0.5.7",
-    "@types/node": "^22.5.4",
-    "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.33",
-    "tailwindcss": "^3.4.1",
-    "vite": "^5.4.8",
-    "vite-plugin-solid": "^2.10.2"
-  },
-  "dependencies": {
-    "class-variance-authority": "^0.7.0",
-    "sldify": "file:",
-    "solid-js": "^1.8.18",
-    "@solidjs/router": "^0.13.5"
-  }
 }

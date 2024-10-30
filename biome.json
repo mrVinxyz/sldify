@@ -6,12 +6,11 @@
         "useTemplate": "off",
         "useSingleVarDeclarator": "off"
       },
-      "a11y": {
-        "noNoninteractiveTabindex": "off",
-        "useValidAnchor": "off"
-      },
       "complexity": {
         "noBannedTypes": "off"
+      },
+      "a11y": {
+        "useValidAnchor": "off"
       }
     }
   },

@@ -46,13 +46,13 @@ importers:
         specifier: ^2.10.2
         version: 2.10.2(solid-js@1.9.2)(vite@5.4.8(@types/node@22.7.5))
 
-  core: {}
-
   doc:
     devDependencies:
-      core:
-        specifier: file:../core
-        version: link:../core
+      pkg:
+        specifier: file:../pkg
+        version: link:../pkg
+
+  pkg: {}
 
 packages:
 

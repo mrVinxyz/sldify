@@ -1,0 +1,7 @@
+{
+	"name": "pkg",
+	"main": "./index.ts",
+	"scripts": {
+		"build": "vite build"
+	}
+}

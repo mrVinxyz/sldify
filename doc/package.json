@@ -3,6 +3,6 @@
         "dev": "vite dev"
     },
     "devDependencies": {
-        "core": "file:../core"
+        "pkg": "file:../pkg"
     }
 }
