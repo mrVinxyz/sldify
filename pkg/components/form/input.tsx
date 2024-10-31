@@ -1,47 +1,61 @@
 import { Field } from '../../forms/field';
-import { InputField } from '../input/field';
 import coerceValue from '../../utils/coerce-value';
+import { Input, type InputProps } from '../input/input';
+import { splitProps } from 'solid-js';
+import { InputGroup } from '../input/group';
+import { Label } from '../input/label';
+import { InputFeedback } from '../input/feedback';
 
-type FormInputProps = {
-	id?: string;
+type FormInputProps = InputProps & {
 	name: string;
 	label: string;
-	type?: string;
-	placeholder?: string;
 	mask?: (e: InputEvent) => void;
-	required?: boolean;
 	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 };
 
-const FormInput = <T,>(props: FormInputProps) => (
-	<Field<T> name={props.name}>
-		{(field) => (
-			<InputField
-				id={props.id || props.name}
-				name={props.name}
-				label={props.label}
-				input={{
-					placeholder: props.placeholder,
-					onInput: (e) => {
-						props.mask?.(e);
+const FormInput = <T,>(props: FormInputProps) => {
+	const [local, rest] = splitProps(props, [
+		'id',
+		'name',
+		'label',
+		'mask',
+		'size',
+		'required',
+		'onInput',
+	]);
 
-						const value = (e.target as HTMLInputElement).value;
-						const coercedValue = coerceValue<T>(value, props.type);
-						field.setValue(coercedValue);
-					},
-					onChange: () => field.setError(''),
-					variant: field.error() !== '' ? 'error' : 'default',
-					value: String(field.value() || ''),
-				}}
-				feedback={{
-					variant: 'error',
-					msg: field.error(),
-				}}
-				size={props.size}
-				required={props.required}
-			/>
-		)}
-	</Field>
-);
+	return (
+		<Field<T> name={local.name}>
+			{(field) => (
+				<InputGroup size={local.size}>
+					<Label
+						for={local.id || local.name}
+						textContent={local.label}
+					/>
+					<Input
+						id={local.id || local.name}
+						onInput={(e) => {
+							props.mask?.(e);
+
+							const value = (e.target as HTMLInputElement).value;
+							const coercedValue = coerceValue<T>(value, props.type);
+							field.setValue(coercedValue);
+							if (typeof local.onInput === 'function') local.onInput?.(e);
+						}}
+						onChange={() => field.setError('')}
+						variant={field.error() !== '' ? 'error' : 'default'}
+						value={field.value() as string | number | string[] | undefined}
+						required={local.required}
+						{...rest}
+					/>
+					<InputFeedback
+						variant='error'
+						msg={field.error()}
+					/>
+				</InputGroup>
+			)}
+		</Field>
+	);
+};
 
 export { FormInput, type FormInputProps };
