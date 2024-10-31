@@ -63,7 +63,7 @@ function createField<T>(name: string): FieldContextProps<T> {
 
 	const updateFieldValue = () => {
 		const formValue = formCtx.state[name] as T | undefined;
-		if (formValue !== undefined && formValue !== value()) {
+		if (formValue !== undefined) {
 			setValue(() => formValue as Exclude<T, Function>);
 			setTouched(true);
 		}
