@@ -100,9 +100,16 @@ function InputSelect<T>(props: InputSelectProps<T>) {
 	);
 
 	const ThisInput = (props: { onClick: (e: MouseEvent) => void }) => {
+		const [isFocusTriggered, setIsFocusTriggered] = createSignal(false);
+
 		const handleClick = (
 			e: MouseEvent & { currentTarget: HTMLInputElement; target: Element },
 		) => {
+			if (isFocusTriggered()) {
+				setIsFocusTriggered(false);
+				return;
+			}
+
 			const otherClick = rest.onClick;
 			if (otherClick && typeof otherClick === 'function') otherClick(e);
 			props.onClick(e);
@@ -113,7 +120,12 @@ function InputSelect<T>(props: InputSelectProps<T>) {
 				value={value()?.label as string | number | string[] | undefined}
 				{...rest}
 				onClick={handleClick}
-				data-selectedValue={local.value}
+				onFocusIn={() => {
+					if (!collapsible.isActive()) {
+						setIsFocusTriggered(true);
+						collapsible.show();
+					}
+				}}
 			/>
 		);
 	};
