@@ -14,7 +14,7 @@ type FormContext<T> = {
 	setErrors: SetStoreFunction<FormErr>;
 	status: Accessor<FormStatus>;
 	setStatus: Setter<FormStatus>;
-	validate: () => void;
+	validate: () => boolean;
 	submit: () => void;
 	reset: () => void;
 	isValid: () => boolean;
@@ -28,7 +28,7 @@ function useForm<T>(): FormContext<T> {
 	return ctx as FormContext<T>;
 }
 
-type FormConfig<T> = {
+type FormAction<T> = {
 	onSubmit?: (values: FormsData<T>) => Promise<unknown> | unknown;
 	onValidate?: (values: FormsData<T>) => FormErr;
 	onReset?: () => void;
@@ -37,7 +37,7 @@ type FormConfig<T> = {
 type FormProps<T> = {
 	name: string;
 	initialState?: FormsData<T>;
-	config?: FormConfig<T>;
+	action?: FormAction<T>;
 	storage?: 'session' | 'local';
 };
 
@@ -83,12 +83,12 @@ function createForm<T>(props: FormProps<T>): FormContext<T> {
 		try {
 			setStatus('validating');
 
-			if (!props.config?.onValidate) {
+			if (!props.action?.onValidate) {
 				setErrors({});
 				return true;
 			}
 
-			const validationErrors = props.config.onValidate(state);
+			const validationErrors = props.action.onValidate(state);
 			setErrors(validationErrors);
 
 			const hasErrors = Object.keys(validationErrors).length > 0;
@@ -112,8 +112,8 @@ function createForm<T>(props: FormProps<T>): FormContext<T> {
 		try {
 			setStatus('submitting');
 
-			if (props.config?.onSubmit) {
-				await props.config.onSubmit(state);
+			if (props.action?.onSubmit) {
+				await props.action.onSubmit(state);
 			}
 
 			setStatus('success');
@@ -127,7 +127,7 @@ function createForm<T>(props: FormProps<T>): FormContext<T> {
 		setErrors({});
 		setStatus('initial');
 		setIsValid(false);
-		props.config?.onReset?.();
+		props.action?.onReset?.();
 	};
 
 	return {
@@ -179,7 +179,7 @@ export {
 	type FormErr,
 	type FormContext,
 	useForm,
-	type FormConfig,
+	type FormAction,
 	type FormProps,
 	createForm,
 	Form,
