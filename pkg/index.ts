@@ -5,6 +5,16 @@ export { type ButtonProps, Button, SubmitBtn, ResetBtn };
 import { type InputProps, Input, inputVariants } from './components/input/input';
 export { type InputProps, Input, inputVariants };
 
+import { type SelectProps, type SelectOption, Select } from './components/input/select';
+export { type SelectProps, type SelectOption, Select };
+
+import {
+	type InputSelectProps,
+	type InputSelectOption,
+	InputSelect,
+} from './components/input/input-select';
+export { type InputSelectProps, type InputSelectOption, InputSelect };
+
 import { InputGroup, type InputGroupProps, inputGroupVariants } from './components/input/group';
 export { InputGroup, type InputGroupProps, inputGroupVariants };
 
@@ -14,9 +24,6 @@ export { Label, type LabelProps };
 import { type InputFeedbackProps, InputFeedback } from './components/input/feedback';
 export { type InputFeedbackProps, InputFeedback };
 
-import { InputField, type InputFieldProps } from './components/input/field';
-export { InputField, type InputFieldProps };
-
 // Forms
 import {
 	type FormsData,
@@ -24,7 +31,7 @@ import {
 	type FormErr,
 	type FormContext,
 	useForm,
-	type FormConfig,
+	type FormAction,
 	type FormProps,
 	createForm,
 	Form,
@@ -36,7 +43,7 @@ export {
 	type FormErr,
 	type FormContext,
 	useForm,
-	type FormConfig,
+	type FormAction,
 	type FormProps,
 	createForm,
 	Form,
@@ -56,6 +63,9 @@ export { type FieldState, type FieldContextProps, useField, createField, type Fi
 // Form Inputs
 import { FormInput, type FormInputProps } from './components/form/input';
 export { FormInput, type FormInputProps };
+
+import { FormSelect, type FormSelectProps } from './components/form/select';
+export { FormSelect, type FormSelectProps };
 
 // Collapsible
 import {
