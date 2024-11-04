@@ -5,16 +5,12 @@ function InputDoc() {
     return (
         <DocumentTmpl
             title="Input"
-            description="A flexible and accessible input component that supports various styles and states, built with SolidJS and class-variance-authority."
+            description="A flexible and accessible input component that supports various styles and states."
             importCode={`import { Input } from './components/input'`}
             features={[
-                "Multiple variants including default, success, and error states",
-                "Customizable sizes (small, medium, large)",
-                "Configurable border radius options",
-                "Dark mode support",
-                "Built-in accessibility features",
-                "Fully typed with TypeScript",
-                "Class variance authority integration for style variants"
+                "Rich styling options including variants, sizes and border radius customization",
+                "Built-in form states for success and error handling",
+                'Built-in accessibility attributes',
             ]}
             apiReference={[
                 {
@@ -25,13 +21,13 @@ function InputDoc() {
                 },
                 {
                     prop: "size",
-                    type: "'sm' | 'md' | 'lg'",
+                    type: "'xs' |  'sm' | 'md' | 'lg' | 'xl'",
                     defaultValue: "'md'",
                     description: "Determines the padding and overall size of the input"
                 },
                 {
                     prop: "rounded",
-                    type: "'none' | 'sm' | 'md' | 'lg'",
+                    type: "'none' | 'sm' | 'md' | 'lg' | 'full'",
                     defaultValue: "'lg'",
                     description: "Controls the border radius of the input"
                 },
@@ -40,12 +36,6 @@ function InputDoc() {
                     type: "boolean",
                     defaultValue: "false",
                     description: "When true, prevents user interaction and applies a disabled style"
-                },
-                {
-                    prop: "required",
-                    type: "boolean",
-                    defaultValue: "false",
-                    description: "Marks the input as required for form validation"
                 },
                 {
                     prop: "class",
@@ -58,7 +48,7 @@ function InputDoc() {
                 {
                     title: "Basic Usage",
                     description: "A simple text input with default styling",
-                    component: (
+                    component: ()=> (
                         <Input
                             type="text"
                             placeholder="Enter your name"
@@ -68,7 +58,7 @@ function InputDoc() {
                 {
                     title: "Input Variants",
                     description: "Different states for validation feedback",
-                    component: (
+                    component: ()=> (
                         <>
                             <Input
                                 type="text"
@@ -90,8 +80,13 @@ function InputDoc() {
                 {
                     title: "Input Sizes",
                     description: "Available size variations",
-                    component: (
+                    component: ()=> (
                         <>
+                            <Input
+                                type="text"
+                                size="xs"
+                                placeholder="Extra Small input"
+                            />
                             <Input
                                 type="text"
                                 size="sm"
@@ -113,7 +108,7 @@ function InputDoc() {
                 {
                     title: "Border Radius Options",
                     description: "Different border radius styles",
-                    component: (
+                    component: ()=> (
                         <>
                             <Input
                                 type="text"
@@ -127,8 +122,23 @@ function InputDoc() {
                             />
                             <Input
                                 type="text"
+                                rounded="md"
+                                placeholder="Medium radius"
+                            />
+                            <Input
+                                type="text"
                                 rounded="lg"
                                 placeholder="Large radius"
+                            />
+                            <Input
+                                type="text"
+                                rounded="xl"
+                                placeholder="Extra Large radius"
+                            />
+                            <Input
+                                type="text"
+                                rounded="full"
+                                placeholder="Full radius"
                             />
                         </>
                     )
@@ -154,6 +164,6 @@ function InputDoc() {
             ]}
         />
     );
-};
+}
 
 export default InputDoc;

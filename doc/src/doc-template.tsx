@@ -15,7 +15,7 @@ interface DocTmpl {
 	examples: Array<{
 		title: string;
 		description: string;
-		component: View;
+		component: () => View;
 	}>;
 	keyboard?: Array<{
 		key: string;
@@ -90,7 +90,7 @@ const DocumentTmpl: Component<DocTmpl> = (props) => {
 									{example.description}
 								</p>
 								<div class='flex items-start flex-wrap gap-2'>
-									{example.component}
+									{example.component()}
 								</div>
 							</div>
 						)}

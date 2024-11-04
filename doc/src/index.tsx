@@ -5,11 +5,16 @@ import { Route, Router, type RouteSectionProps } from '@solidjs/router';
 import ButtonDoc from './pages/button-doc';
 import InputDoc from './pages/input-doc';
 import Dev from './dev';
+import SelectDoc from './pages/select-doc';
 
 render(() => <Routing />, document.body);
 
 function Routing() {
-	const Layout = (props: RouteSectionProps) => <main class={'h-screen w-screen overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900'}>{props.children}</main>;
+	const Layout = (props: RouteSectionProps) => (
+		<main class={'h-screen w-screen overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900'}>
+			{props.children}
+		</main>
+	);
 
 	return (
 		<Router root={Layout}>
@@ -24,6 +29,10 @@ function Routing() {
 			<Route
 				path='/input'
 				component={InputDoc}
+			/>
+			<Route
+				path='/select'
+				component={SelectDoc}
 			/>
 		</Router>
 	);
