@@ -6,13 +6,14 @@ import { CollapsibleContent } from '../collapsible/content';
 import { cva } from 'class-variance-authority';
 
 type InputSelectOption<T> = {
-	label: string;
+	label?: string;
 	value: T;
 };
 
-type InputSelectProps<T> = InputProps & {
+type InputSelectProps<T> = Omit<InputProps, 'value'> & {
+	name: string;
 	options: InputSelectOption<T>[];
-	value?: T;
+	initialOption?: InputSelectOption<T>;
 	onSelected?: (option: InputSelectOption<T>) => void;
 	onOpen?: () => void;
 	containerSize?: 'sm' | 'md' | 'lg' | 'xl';
@@ -55,8 +56,11 @@ const optionItemVariants = cva(
 );
 
 function InputSelect<T>(props: InputSelectProps<T>) {
-	const [local, rest] = splitProps(props, ['options', 'value', 'onSelected']);
-	const [value, setValue] = createSignal<InputSelectOption<T>>();
+	const [local, rest] = splitProps(props, ['options', 'initialOption', 'onSelected', 'name']);
+	const [value, setValue] = createSignal<InputSelectOption<T>>(local.initialOption || {
+		label: '',
+		value: '' as T,
+	});
 
 	const Option = (optionProp: InputSelectOption<T>) => {
 		return (
@@ -117,8 +121,9 @@ function InputSelect<T>(props: InputSelectProps<T>) {
 
 		return (
 			<Input
-				value={value()?.label as string | number | string[] | undefined}
 				{...rest}
+				name={local.name}
+				value={value()?.label as string | number | string[] | undefined}
 				onClick={handleClick}
 				onFocusIn={() => {
 					if (!collapsible.isActive()) {
