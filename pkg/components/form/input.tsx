@@ -6,14 +6,14 @@ import { InputGroup } from '../input/group';
 import { Label } from '../input/label';
 import { InputFeedback } from '../input/feedback';
 
-type FormInputProps<T> = Omit<InputProps, 'name'> & {
-	name: keyof T;
+type FormInputProps = Omit<InputProps, 'name'> & {
+	name: string;
 	label: string;
 	mask?: (e: InputEvent) => void;
 	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 };
 
-const FormInput = <T,>(props: FormInputProps<T>) => {
+const FormInput = <T,>(props: FormInputProps) => {
 	const [local, rest] = splitProps(props, [
 		'id',
 		'name',
@@ -24,19 +24,17 @@ const FormInput = <T,>(props: FormInputProps<T>) => {
 		'onInput',
 	]);
 
-	const name = local.name as string;
-
 	return (
-		<Field<T> name={name}>
+		<Field<T> name={local.name}>
 			{(field) => (
 				<InputGroup size={local.size}>
 					<Label
-						for={name}
+						for={local.name}
 						textContent={local.label}
 						required={local.required}
 					/>
 					<Input
-						id={name}
+						id={local.name}
 						onInput={(e) => {
 							props.mask?.(e);
 

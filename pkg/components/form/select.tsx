@@ -6,7 +6,7 @@ import { InputFeedback } from '../input/feedback';
 import { Select, type SelectProps } from '../input/select';
 
 type FormSelectProps<T> = Omit<SelectProps<T>, 'name'> & {
-	name: keyof T;
+	name: string;
 	label: string;
 	mask?: (e: InputEvent) => void;
 	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -24,19 +24,17 @@ const FormSelect = <T,>(props: FormSelectProps<T>) => {
 		'onChange',
 	]);
 
-	const name = local.name as string;
-
 	return (
-		<Field<T> name={name}>
+		<Field<T> name={local.name}>
 			{(field) => (
 				<InputGroup size={local.size}>
 					<Label
-						for={name}
+						for={local.name}
 						textContent={local.label}
 						required={local.required}
 					/>
 					<Select<T>
-						id={name}
+						id={local.name}
 						onChange={(value) => {
 							field.setValue(value);
 							field.setError('');
