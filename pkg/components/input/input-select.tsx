@@ -7,7 +7,7 @@ import { cva } from 'class-variance-authority';
 
 type InputSelectOption<T> = {
 	label?: string;
-	value: T;
+	value: T | undefined;
 };
 
 type InputSelectProps<T> = Omit<InputProps, 'value'> & {
@@ -57,10 +57,12 @@ const optionItemVariants = cva(
 
 function InputSelect<T>(props: InputSelectProps<T>) {
 	const [local, rest] = splitProps(props, ['options', 'initialOption', 'onSelected', 'name']);
-	const [value, setValue] = createSignal<InputSelectOption<T>>(local.initialOption || {
-		label: '',
-		value: '' as T,
-	});
+	const [value, setValue] = createSignal<InputSelectOption<T>>(
+		local.initialOption || {
+			label: '',
+			value: '' as T,
+		},
+	);
 
 	const Option = (optionProp: InputSelectOption<T>) => {
 		return (
@@ -103,7 +105,7 @@ function InputSelect<T>(props: InputSelectProps<T>) {
 		</div>
 	);
 
-	const ThisInput = (props: { onClick: (e: MouseEvent) => void }) => {
+	const ThisInput = (props: { id: string; onClick: (e: MouseEvent) => void }) => {
 		const [isFocusTriggered, setIsFocusTriggered] = createSignal(false);
 
 		const handleClick = (
@@ -122,6 +124,7 @@ function InputSelect<T>(props: InputSelectProps<T>) {
 		return (
 			<Input
 				{...rest}
+				id={props.id}
 				name={local.name}
 				value={value()?.label as string | number | string[] | undefined}
 				onClick={handleClick}
