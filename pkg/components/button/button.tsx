@@ -14,6 +14,7 @@ type ButtonProps = JSX.IntrinsicElements['button'] &
 
 const Button: Component<ButtonProps> = (props) => {
 	const [local, rest] = splitProps(props, [
+		'type',
 		'variant',
 		'color',
 		'size',
@@ -36,6 +37,7 @@ const Button: Component<ButtonProps> = (props) => {
 				hasIcon: !!(local.leading || local.trailing),
 			})}
 			disabled={local.loading}
+			type={local.type || 'button'}
 			{...rest}
 		>
 			{local.loading && (
