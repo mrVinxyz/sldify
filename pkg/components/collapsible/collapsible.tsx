@@ -1,7 +1,18 @@
-import { type Component, createContext, createSignal, JSX, useContext } from 'solid-js';
-import type {ChildrenCtxProp, OptChildProp, OptContextProp} from '../../utils/types';
+import {
+	type Component,
+	createContext,
+	createEffect,
+	createSignal,
+	JSX,
+	onCleanup,
+	onMount,
+	useContext,
+} from 'solid-js';
+import type { ChildrenCtxProp, OptChildProp, OptContextProp } from '../../utils/types';
+import generateId from '../../utils/id';
 
 type CollapsibleContext = {
+	id: () => string;
 	show: () => void;
 	hide: () => void;
 	toggle: () => void;
@@ -10,6 +21,7 @@ type CollapsibleContext = {
 
 type CollapsibleProps = OptContextProp<CollapsibleContext> &
 	OptChildProp & {
+		id?: string;
 		onShow?: () => void;
 		onHide?: () => void;
 		onToggle?: () => void;
@@ -24,26 +36,60 @@ function useCollapsible(): CollapsibleContext {
 }
 
 function createCollapsible(props?: Omit<CollapsibleProps, 'ctx'>): CollapsibleContext {
-	const [visibility, setVisibility] = createSignal(false);
+	const id = props?.id ?? generateId('collapsible');
+	const [active, setActive] = createSignal(false);
 
 	const show = () => {
-		setVisibility(true);
+		setActive(true);
 		props?.onShow?.();
 	};
 
 	const hide = () => {
-		setVisibility(false);
+		setActive(false);
 		props?.onHide?.();
 	};
 
 	const toggle = () => {
-		setVisibility((prev) => !prev);
+		setActive((prev) => !prev);
 		props?.onToggle?.();
 	};
 
-	const isActive = () => visibility();
+	const isActive = () => active();
+
+	let control: HTMLElement | undefined;
+	let content: HTMLElement | undefined;
+
+	onMount(() => {
+		control = document.getElementById(id.concat('-control')) as HTMLElement;
+		content = document.getElementById(id.concat('-content')) as HTMLElement;
+	});
+
+	const handleOutsideClick = (e: MouseEvent) => {
+		const target = e.target as HTMLElement;
+		if (target !== control && target !== content) hide();
+	};
+
+	const handleEscapeKey = (e: KeyboardEvent) => {
+		if (e.key === 'Escape') hide();
+	};
+
+	createEffect(() => {
+		if (active()) {
+			window.addEventListener('click', handleOutsideClick);
+			window.addEventListener('keydown', handleEscapeKey);
+		} else {
+			window.removeEventListener('click', handleOutsideClick);
+			window.removeEventListener('keydown', handleEscapeKey);
+		}
+	});
+
+	onCleanup(() => {
+		window.removeEventListener('click', handleOutsideClick);
+		window.removeEventListener('keydown', handleEscapeKey);
+	});
 
 	return {
+		id: () => id,
 		show,
 		hide,
 		toggle,
@@ -60,13 +106,8 @@ const Collapsible: Component<CollapsibleProps> = (props) => {
 	);
 };
 
-type CollapsibleCtxProps =  ChildrenCtxProp<CollapsibleContext> & {
+type CollapsibleCtxProps = ChildrenCtxProp<CollapsibleContext> & {
 	collapsible?: CollapsibleProps;
-};
-
-const CollapsibleCtx: Component<CollapsibleCtxProps> = (props) => {
-	const collapsible = props.collapsible?.ctx ?? createCollapsible(props.collapsible);
-	return props.children(collapsible);
 };
 
 export {
@@ -76,5 +117,4 @@ export {
 	useCollapsible,
 	createCollapsible,
 	Collapsible,
-	CollapsibleCtx,
 };

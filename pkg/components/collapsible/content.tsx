@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import type { Component } from 'solid-js';
 import type { ChildProp, OptClassProp } from '../../utils/types';
-import {useCollapsible} from "./collapsible";
+import { useCollapsible } from './collapsible';
 
 type CollapsibleContentProps = VariantProps<typeof collapsibleContentStyles> &
 	ChildProp &
@@ -37,6 +37,7 @@ const CollapsibleContent: Component<CollapsibleContentProps> = (props) => {
 	const collapsible = useCollapsible();
 	return (
 		<div
+			id={collapsible.id().concat('-content')}
 			class={collapsibleContentStyles({
 				placement: props.placement,
 				size: props.size,

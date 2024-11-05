@@ -1,21 +1,19 @@
-import { type CollapsibleContext, useCollapsible} from './collapsible';
+import { type CollapsibleContext, useCollapsible } from './collapsible';
 import { Dynamic } from 'solid-js/web';
 import type { ValidComponent } from 'solid-js';
-import type { OptContextProp} from "../../utils/types";
+import type { OptContextProp } from '../../utils/types';
 
 type CollapsibleControlProps = OptContextProp<CollapsibleContext> & {
-	asChild: ValidComponent
+	asChild: ValidComponent;
 };
 
 function CollapsibleControl(props: CollapsibleControlProps) {
-	const collapsible =  props.ctx ?? useCollapsible();
+	const collapsible = props.ctx ?? useCollapsible();
 	return (
 		<Dynamic
+			id={collapsible.id().concat('-control')}
 			component={props.asChild}
-			onClick={() => {
-				console.log('clicked');
-				collapsible.toggle();
-			}}
+			onClick={() => collapsible.toggle()}
 		/>
 	);
 }
