@@ -28,7 +28,7 @@ function useForm<T>(): FormContext<T> {
 	return ctx as FormContext<T>;
 }
 
-type FormAction<T> = {
+type FormActions<T> = {
 	onSubmit?: (values: FormsData<T>) => Promise<unknown> | unknown;
 	onValidate?: (values: FormsData<T>) => FormErr;
 	onReset?: () => void;
@@ -37,7 +37,7 @@ type FormAction<T> = {
 type FormProps<T> = {
 	name: string;
 	initialState?: FormsData<T>;
-	action?: FormAction<T>;
+	action?: FormActions<T>;
 	storage?: 'session' | 'local';
 };
 
@@ -179,7 +179,7 @@ export {
 	type FormErr,
 	type FormContext,
 	useForm,
-	type FormAction,
+	type FormActions,
 	type FormProps,
 	createForm,
 	Form,
