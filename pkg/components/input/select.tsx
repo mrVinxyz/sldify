@@ -122,7 +122,6 @@ function Select<T>(props: SelectProps<T>) {
 			{local.placeholder && (
 				<option
 					value=''
-					disabled
 				>
 					{local.placeholder}
 				</option>
