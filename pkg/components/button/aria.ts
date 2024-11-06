@@ -9,7 +9,7 @@ export function buttonAria(props: ButtonProps) {
 		'aria-label': !props.children ? props.labelText : undefined,
 		'aria-controls': props.controls,
 		'aria-expanded': props.controls ? false : undefined,
-		'aria-busy': props.loading,
+		'aria-busy': props.loading ? 'true' : 'false',
 		'aria-hidden': props.leading || props.trailing ? 'true' : undefined,
 	} as const;
 }

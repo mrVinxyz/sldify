@@ -2,12 +2,12 @@ import type { VariantProps } from 'class-variance-authority';
 import { type Component, type JSX, splitProps } from 'solid-js';
 import buttonVariants from './variants';
 import type { View } from '../../utils/types';
+import {buttonAria} from "./aria";
 
 type ButtonProps = JSX.IntrinsicElements['button'] &
 	VariantProps<typeof buttonVariants> & {
 		leading?: View;
 		trailing?: View;
-		loading?: boolean;
 		controls?: string;
 		labelText?: string;
 	};
@@ -26,6 +26,8 @@ const Button: Component<ButtonProps> = (props) => {
 		'children',
 	]);
 
+	const aria = buttonAria(props);
+
 	return (
 		<button
 			class={buttonVariants({
@@ -36,16 +38,24 @@ const Button: Component<ButtonProps> = (props) => {
 				class: local.class,
 				hasIcon: !!(local.leading || local.trailing),
 			})}
-			disabled={local.loading}
+			disabled={local.loading !== undefined}
 			type={local.type || 'button'}
+			{...aria}
 			{...rest}
 		>
-			{local.loading && (
-				<span class='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+			{local.loading && local.loading === 'left' && (
+				<span class='me-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
 			)}
+
 			{local.leading}
+
 			{local.children}
+
 			{local.trailing}
+
+			{local.loading && local.loading === 'right' && (
+				<span class='ms-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+			)}
 		</button>
 	);
 };

@@ -6,14 +6,15 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				solid: 'border-2 border-transparent',
-				outlined: 'border-2',
+				outline: 'border-2',
 				dotted: 'border-2 border-dotted',
+				ghost: '',
 			},
 			color: {
-				primary: '',
-				secondary: '',
-				dark: '',
-				light: '',
+				blue: '',
+				gray: '',
+				white: '',
+				black: '',
 				green: '',
 				red: '',
 				yellow: '',
@@ -39,8 +40,8 @@ const buttonVariants = cva(
 				full: 'rounded-full',
 			},
 			loading: {
-				true: 'opacity-80 cursor-wait',
-				false: '',
+				left: 'opacity-80 cursor-wait',
+				right: 'opacity-80 cursor-wait',
 			},
 			hasIcon: {
 				true: 'gap-2',
@@ -51,22 +52,22 @@ const buttonVariants = cva(
 			// Solid Variants
 			{
 				variant: 'solid',
-				color: 'primary',
+				color: 'blue',
 				class: 'bg-blue-700 text-white hover:bg-blue-800 focus-visible:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700',
 			},
 			{
 				variant: 'solid',
-				color: 'secondary',
+				color: 'gray',
 				class: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
 			},
 			{
 				variant: 'solid',
-				color: 'dark',
+				color: 'black',
 				class: 'bg-gray-800 text-white hover:bg-gray-900 focus-visible:ring-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700',
 			},
 			{
 				variant: 'solid',
-				color: 'light',
+				color: 'white',
 				class: 'bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700',
 			},
 			{
@@ -89,66 +90,66 @@ const buttonVariants = cva(
 				color: 'orange',
 				class: 'bg-orange-700 text-white hover:bg-orange-800 focus-visible:ring-orange-300 dark:bg-orange-600 dark:hover:bg-orange-700',
 			},
-			// Outlined Variants
+			// outline Variants
 			{
-				variant: 'outlined',
-				color: 'primary',
+				variant: 'outline',
+				color: 'blue',
 				class: 'border-blue-700 text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-300 dark:border-blue-600 dark:text-blue-600',
 			},
 			{
-				variant: 'outlined',
-				color: 'secondary',
+				variant: 'outline',
+				color: 'gray',
 				class: 'border-gray-200 text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-100 dark:border-gray-600 dark:text-gray-400',
 			},
 			{
-				variant: 'outlined',
-				color: 'dark',
+				variant: 'outline',
+				color: 'black',
 				class: 'border-gray-800 text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-300 dark:border-gray-700 dark:text-gray-400',
 			},
 			{
-				variant: 'outlined',
-				color: 'light',
+				variant: 'outline',
+				color: 'white',
 				class: 'border-gray-300 text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-100 dark:border-gray-600 dark:text-white',
 			},
 			{
-				variant: 'outlined',
+				variant: 'outline',
 				color: 'green',
 				class: 'border-green-700 text-green-700 hover:bg-green-50 focus-visible:ring-green-300 dark:border-green-600 dark:text-green-600',
 			},
 			{
-				variant: 'outlined',
+				variant: 'outline',
 				color: 'red',
 				class: 'border-red-700 text-red-700 hover:bg-red-50 focus-visible:ring-red-300 dark:border-red-600 dark:text-red-600',
 			},
 			{
-				variant: 'outlined',
+				variant: 'outline',
 				color: 'yellow',
 				class: 'border-yellow-400 text-yellow-400 hover:bg-yellow-50 focus-visible:ring-yellow-300',
 			},
 			{
-				variant: 'outlined',
+				variant: 'outline',
 				color: 'orange',
 				class: 'border-orange-700 text-orange-700 hover:bg-orange-50 focus-visible:ring-orange-300 dark:border-orange-600 dark:text-orange-600',
 			},
 			// Dotted Variants
 			{
 				variant: 'dotted',
-				color: 'primary',
+				color: 'blue',
 				class: 'border-blue-700 text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-300 dark:border-blue-600 dark:text-blue-600',
 			},
 			{
 				variant: 'dotted',
-				color: 'secondary',
+				color: 'gray',
 				class: 'border-gray-200 text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-100 dark:border-gray-600 dark:text-gray-400',
 			},
 			{
 				variant: 'dotted',
-				color: 'dark',
+				color: 'black',
 				class: 'border-gray-800 text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-300 dark:border-gray-700 dark:text-gray-400',
 			},
 			{
 				variant: 'dotted',
-				color: 'light',
+				color: 'white',
 				class: 'border-gray-300 text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-100 dark:border-gray-600 dark:text-white',
 			},
 			{
@@ -171,13 +172,53 @@ const buttonVariants = cva(
 				color: 'orange',
 				class: 'border-orange-700 text-orange-700 hover:bg-orange-50 focus-visible:ring-orange-300 dark:border-orange-600 dark:text-orange-600',
 			},
+			// Ghost Variants
+			{
+				variant: 'ghost',
+				color: 'blue',
+				class: 'text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-300 dark:text-blue-500 dark:hover:bg-blue-900/20',
+			},
+			{
+				variant: 'ghost',
+				color: 'gray',
+				class: 'text-gray-700 hover:bg-gray-50 focus-visible:ring-gray-200 dark:text-gray-300 dark:hover:bg-gray-800/30',
+			},
+			{
+				variant: 'ghost',
+				color: 'black',
+				class: 'text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-300 dark:text-gray-300 dark:hover:bg-gray-800/30',
+			},
+			{
+				variant: 'ghost',
+				color: 'white',
+				class: 'text-gray-700 hover:bg-gray-50 focus-visible:ring-gray-200 dark:text-white dark:hover:bg-gray-800/30',
+			},
+			{
+				variant: 'ghost',
+				color: 'green',
+				class: 'text-green-700 hover:bg-green-50 focus-visible:ring-green-300 dark:text-green-500 dark:hover:bg-green-900/20',
+			},
+			{
+				variant: 'ghost',
+				color: 'red',
+				class: 'text-red-700 hover:bg-red-50 focus-visible:ring-red-300 dark:text-red-500 dark:hover:bg-red-900/20',
+			},
+			{
+				variant: 'ghost',
+				color: 'yellow',
+				class: 'text-yellow-600 hover:bg-yellow-50 focus-visible:ring-yellow-300 dark:text-yellow-500 dark:hover:bg-yellow-900/20',
+			},
+			{
+				variant: 'ghost',
+				color: 'orange',
+				class: 'text-orange-700 hover:bg-orange-50 focus-visible:ring-orange-300 dark:text-orange-500 dark:hover:bg-orange-900/20',
+			},
 		],
 		defaultVariants: {
-			variant: 'solid',
-			color: 'primary',
-			size: 'rec-md',
+			variant: 'ghost',
+			color: 'white',
 			rounded: 'md',
-			loading: false,
+			size: 'rec-md'
 		},
 	},
 );
