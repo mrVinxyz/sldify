@@ -66,7 +66,7 @@ const FormInputSelect = <T extends string | number | object>(props: FormInputSel
 							variant={field.error() ? 'error' : 'default'}
 							required={local.required}
 							initialOption={{
-								label: String(parsedValue),
+								label: String(parsedValue || ''),
 								value: value,
 							}}
 							name={name}
