@@ -12,7 +12,7 @@ type InputSelectOption<T> = {
 
 type InputSelectProps<T> = Omit<InputProps, 'value'> & {
 	name: string;
-	options: InputSelectOption<T>[];
+	options?: InputSelectOption<T>[];
 	initialOption?: InputSelectOption<T>;
 	onSelected?: (option: InputSelectOption<T>) => void;
 	onOpen?: () => void;
