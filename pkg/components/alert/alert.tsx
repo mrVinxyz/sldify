@@ -20,11 +20,10 @@ type AlertProps = OptContextProp<AlertContext> &
 	VariantProps<typeof alertVariants> &
 	ChildProp &
 	OptClassProp & {
-		duration?: number;
-		disableDuration?: boolean;
-		onShow?: () => void;
-		onHide?: () => void;
-	};
+	duration?: number;
+	onShow?: () => void;
+	onHide?: () => void;
+};
 
 const alertVariants = cva('flex items-center p-4 mb-4 text-sm rounded-lg', {
 	variants: {
@@ -96,15 +95,15 @@ function createAlert(props?: AlertProps): AlertContext {
 
 	const isActive = () => active();
 
-	if (!props?.disableDuration) {
+	const duration = props?.duration;
+	if (duration) {
 		let timeoutId: number;
-		const defaultDuration = 5000;
 
 		createEffect(() => {
-			if (isActive() && defaultDuration) {
+			if (isActive()) {
 				timeoutId = window.setTimeout(() => {
 					hide();
-				}, defaultDuration);
+				}, duration);
 			}
 		});
 
