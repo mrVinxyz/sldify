@@ -5,7 +5,7 @@ function InputDoc() {
     return (
         <DocumentTmpl
             title="Input"
-            description="A flexible and accessible input component that supports various styles and states."
+            description="A versatile Input component."
             importCode={`import { Input } from './components/input'`}
             features={[
                 "Rich styling options including variants, sizes and border radius customization",

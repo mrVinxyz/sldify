@@ -1,23 +1,19 @@
 import { Button } from 'pkg';
 import DocumentTmpl from '../doc-template';
+import ColorModeToggler from "pkg/components/button/color-mode-toggler";
 
 function ButtonDoc() {
 	return (
 		<DocumentTmpl
 			title='Button'
-			description='A versatile and accessible button component with support for multiple variants, sizes, and states.'
-			importCode={`import { Button } from '@';`}
+			description='A versatile button component.'
+			importCode={`import { Button } from './components/button';`}
 			features={[
 				'Native HTMLButton behavior',
-				'Multiple style variants',
-				'Eight color schemes with dark mode support',
-				'Five border radius options',
-				'Ten size options (5 rectangular, 5 square)',
-				'Loading state with spinner',
-				'Support for leading and trailing icons',
-				'Full ARIA accessibility support',
-				'Dark mode compatible',
-				'Customizable via Tailwind classes',
+				'Flexible styling options including variants, colors, sizes and border radius customization',
+				'Support for icons',
+				'Support for loading state',
+				'Built-in accessibility attributes',
 			]}
 			apiReference={[
 				{
@@ -69,6 +65,7 @@ function ButtonDoc() {
 					description: 'Choose from solid, outline, or dotted variants.',
 					component: () => (
 						<div class='flex gap-4'>
+							<ColorModeToggler/>
 							<Button
 								variant='solid'
 								color='blue'
@@ -93,6 +90,12 @@ function ButtonDoc() {
 							>
 								Dotted
 							</Button>
+							<Button
+								variant='soft'
+								color='blue'
+							>
+								Soft
+							</Button>
 						</div>
 					),
 				},
@@ -108,22 +111,22 @@ function ButtonDoc() {
 								Blue
 							</Button>
 							<Button
-								color='gray'
+								color='grayish'
 								variant='solid'
 							>
-								Gray
+								Grayish
 							</Button>
 							<Button
 								color='black'
 								variant='solid'
 							>
-								Dark
+								Black
 							</Button>
 							<Button
 								color='white'
 								variant='solid'
 							>
-								Light
+								White
 							</Button>
 							<Button
 								color='green'
