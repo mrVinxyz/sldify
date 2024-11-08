@@ -43,6 +43,7 @@ const FormInput = <T,>(props: FormInputProps) => {
 							field.setValue(coercedValue);
 							if (typeof local.onInput === 'function') local.onInput?.(e);
 						}}
+						name={local.name}
 						onChange={() => field.setError('')}
 						variant={field.error() !== '' ? 'error' : 'default'}
 						value={field.value() as string | number | string[] | undefined}
