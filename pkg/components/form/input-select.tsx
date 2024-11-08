@@ -10,7 +10,7 @@ type FormInputSelectProps<T extends string | number | object> = InputSelectProps
 	label: string;
 	mask?: (e: InputEvent) => void;
 	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-	key: keyof T;
+	key?: keyof T;
 };
 
 const FormInputSelect = <T extends string | number | object>(props: FormInputSelectProps<T>) => {
@@ -26,17 +26,21 @@ const FormInputSelect = <T extends string | number | object>(props: FormInputSel
 	]);
 
 	const name = local.name as string;
-	return (
-		<Field<T> name={name}>
-			{(field) => {
-				const value = field.value();
 
-				let parsedValue: unknown;
-				if (typeof value === 'object' && local.key) {
-					parsedValue = value[local.key];
-				} else {
-					parsedValue = value;
-				}
+	return (
+		<Field<T, string> name={name}>
+			{(field) => {
+				const getDisplayValue = () => {
+					const value = field.value();
+					if (value === undefined) return '';
+
+					if (typeof value === 'object' && value !== null && local.key) {
+						const propertyValue = value[local.key];
+						return propertyValue != null ? String(propertyValue) : '';
+					}
+
+					return String(value || '');
+				};
 
 				return (
 					<InputGroup size={local.size}>
@@ -48,26 +52,17 @@ const FormInputSelect = <T extends string | number | object>(props: FormInputSel
 						<InputSelect<T>
 							id={name}
 							onSelected={(option) => {
-								let selectedValue: T | unknown;
-
-								if (
-									local.key &&
-									typeof option.value === 'object' &&
-									option.value !== null
-								) {
-									selectedValue = option.value[local.key];
-								} else {
-									selectedValue = option.value;
-								}
-
-								field.setValue(selectedValue as T);
-								field.setError('');
+								queueMicrotask(() => {
+									field.setMeta(option.label || '');
+									field.setValue(option.value);
+									field.setError('');
+								});
 							}}
 							variant={field.error() ? 'error' : 'default'}
 							required={local.required}
-							initialOption={{
-								label: String(parsedValue || ''),
-								value: value,
+							defaultOption={{
+								label: field.meta() || getDisplayValue(),
+								value: field.value(),
 							}}
 							name={name}
 							{...rest}
