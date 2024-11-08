@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 
 const buttonVariants = cva(
-	'inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60',
+	'inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 btn',
 	{
 		variants: {
 			variant: {
@@ -22,23 +22,12 @@ const buttonVariants = cva(
 				orange: '',
 			},
 			size: {
-				'rec-xs': 'py-1.5 px-3 text-xs',
 				'rec-sm': 'py-1.5 px-3 text-sm',
-				'rec-md': 'py-2.5 px-5 text-sm',
+				'rec-md': 'py-2 px-4 text-sm',
 				'rec-lg': 'py-2.5 px-5 text-base',
-				'rec-xl': 'py-3.5 px-7 text-base',
-				'sqr-xs': 'p-1.5 text-xs',
 				'sqr-sm': 'p-1.5 text-sm',
-				'sqr-md': 'p-2.5 text-sm',
+				'sqr-md': 'p-2 text-sm',
 				'sqr-lg': 'p-2.5 text-base',
-				'sqr-xl': 'p-3.5 text-base',
-			},
-			rounded: {
-				none: 'rounded-none',
-				sm: 'rounded-sm',
-				md: 'rounded-md',
-				lg: 'rounded-lg',
-				full: 'rounded-full',
 			},
 			loading: {
 				left: 'opacity-80 cursor-wait',
@@ -259,7 +248,6 @@ const buttonVariants = cva(
 		defaultVariants: {
 			variant: 'ghost',
 			color: 'white',
-			rounded: 'sm',
 			size: 'rec-md',
 		},
 	},

@@ -18,7 +18,6 @@ const Button: Component<ButtonProps> = (props) => {
 		'variant',
 		'color',
 		'size',
-		'rounded',
 		'class',
 		'loading',
 		'leading',
@@ -34,7 +33,6 @@ const Button: Component<ButtonProps> = (props) => {
 				variant: local.variant,
 				color: local.color,
 				size: local.size,
-				rounded: local.rounded,
 				class: local.class,
 				hasIcon: !!(local.leading || local.trailing),
 			})}
