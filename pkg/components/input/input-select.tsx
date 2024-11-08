@@ -11,15 +11,19 @@ type InputSelectOption<T> = {
 };
 
 type InputSelectProps<T> = Omit<InputProps, 'value'> & {
+	// params
 	name: string;
 	options?: InputSelectOption<T>[];
-	initialOption?: InputSelectOption<T>;
+	defaultOption?: InputSelectOption<T>;
+	// events
 	onSelected?: (option: InputSelectOption<T>) => void;
 	onOpen?: () => void;
+	// styling
 	containerSize?: 'sm' | 'md' | 'lg' | 'xl';
 	containerClass?: string;
-	optionItemSize?: 'sm' | 'md' | 'lg';
-	optionItemClass?: string;
+	subContainerClass?: string;
+	optionSize?: 'sm' | 'md' | 'lg';
+	optionClass?: string;
 };
 
 const optionsContainerVariants = cva(
@@ -39,7 +43,7 @@ const optionsContainerVariants = cva(
 	},
 );
 
-const optionItemVariants = cva(
+const optionVariants = cva(
 	'font-medium block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white',
 	{
 		variants: {
@@ -56,9 +60,9 @@ const optionItemVariants = cva(
 );
 
 function InputSelect<T>(props: InputSelectProps<T>) {
-	const [local, rest] = splitProps(props, ['options', 'initialOption', 'onSelected', 'name']);
+	const [local, rest] = splitProps(props, ['options', 'defaultOption', 'onSelected', 'name']);
 	const [value, setValue] = createSignal<InputSelectOption<T>>(
-		local.initialOption || {
+		local.defaultOption || {
 			label: '',
 			value: '' as T,
 		},
@@ -68,9 +72,9 @@ function InputSelect<T>(props: InputSelectProps<T>) {
 		return (
 			<a
 				href='#'
-				class={optionItemVariants({
-					size: props.optionItemSize,
-					class: props.optionItemClass,
+				class={optionVariants({
+					size: props.optionSize,
+					class: props.optionClass,
 				})}
 				onClick={() => {
 					local.onSelected?.(optionProp);
@@ -91,7 +95,9 @@ function InputSelect<T>(props: InputSelectProps<T>) {
 			})}
 		>
 			<ul
-				class='py-2 text-sm text-gray-700 dark:text-gray-200'
+				class={'py-2 text-sm text-gray-700 dark:text-gray-200 '.concat(
+					props.subContainerClass || '',
+				)}
 				aria-labelledby='dropdownDefaultButton'
 			>
 				<For each={local.options}>
