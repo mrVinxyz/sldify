@@ -1,14 +1,14 @@
 import { For, type JSX, splitProps } from 'solid-js';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-type SelectOption<T> = {
+type SelectOption<T = unknown> = {
 	label: string;
 	value: T;
 };
 
-type SelectProps<T> = Omit<JSX.IntrinsicElements['select'], 'value' | 'onChange'> &
+type SelectProps<T = unknown> = Omit<JSX.IntrinsicElements['select'], 'value' | 'onChange'> &
 	VariantProps<typeof selectVariants> & {
-		options: SelectOption<T>[];
+		options?: SelectOption<T>[];
 		defaultOption?: number;
 		value?: T;
 		onChange?: (value: T) => void;
@@ -16,7 +16,7 @@ type SelectProps<T> = Omit<JSX.IntrinsicElements['select'], 'value' | 'onChange'
 	};
 
 const selectVariants = cva(
-	'block w-full text-sm font-medium transition-colors focus-visible:outline-none focus:ring-2 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60',
+	'block w-full text-sm font-medium transition-colors focus-visible:outline-none focus:ring-2 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60 select',
 	{
 		variants: {
 			variant: {
@@ -32,19 +32,10 @@ const selectVariants = cva(
 				md: 'p-2.5',
 				lg: 'p-3',
 			},
-			rounded: {
-				none: 'rounded-none',
-				sm: 'rounded-sm',
-				md: 'rounded-md',
-				lg: 'rounded-lg',
-				xl: 'rounded-xl',
-				full: 'rounded-full',
-			},
 		},
 		defaultVariants: {
 			variant: 'default',
 			size: 'md',
-			rounded: 'lg',
 		},
 	},
 );
@@ -69,7 +60,6 @@ function Select<T>(props: SelectProps<T>) {
 		'placeholder',
 		'variant',
 		'size',
-		'rounded',
 		'class',
 		'defaultOption'
 	]);
@@ -111,7 +101,6 @@ function Select<T>(props: SelectProps<T>) {
 			class={selectVariants({
 				variant: local.variant,
 				size: local.size,
-				rounded: local.rounded,
 				class: local.class,
 			})}
 			value={valueParser(local.value)}

@@ -4,7 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 type InputProps = JSX.IntrinsicElements['input'] & VariantProps<typeof inputVariants>;
 
 const inputVariants = cva(
-	'block w-full text-sm font-medium transition-colors focus-visible:outline-none focus:ring-2 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50',
+	'block w-full text-sm font-medium transition-colors focus-visible:outline-none focus:ring-2 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 input',
 	{
 		variants: {
 			variant: {
@@ -21,14 +21,6 @@ const inputVariants = cva(
 				md: 'p-2.5',
 				lg: 'p-3',
 			},
-			rounded: {
-				none: 'rounded-none',
-				sm: 'rounded-sm',
-				md: 'rounded-md',
-				lg: 'rounded-lg',
-				xl: 'rounded-xl',
-				full: 'rounded-full',
-			},
 		},
 		compoundVariants: [
 			{
@@ -38,7 +30,6 @@ const inputVariants = cva(
 		defaultVariants: {
 			variant: 'default',
 			size: 'md',
-			rounded: 'lg',
 		},
 	},
 );
@@ -56,7 +47,7 @@ function inputAria(props: InputProps) {
 }
 
 const Input: Component<InputProps> = (props) => {
-	const [local, rest] = splitProps(props, ['variant', 'size', 'rounded', 'class']);
+	const [local, rest] = splitProps(props, ['variant', 'size', 'class']);
 	const aria = inputAria(props);
 
 	return (
@@ -64,7 +55,6 @@ const Input: Component<InputProps> = (props) => {
 			class={inputVariants({
 				variant: local.variant,
 				size: local.size,
-				rounded: local.rounded,
 				class: local.class,
 			})}
 			{...aria}
