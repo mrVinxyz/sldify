@@ -2,18 +2,13 @@ import { createContext, createEffect, createMemo, createSignal, useContext } fro
 import { useForm } from './forms';
 import type { View } from '../utils/types';
 
-type FieldState<T> = {
-	value: T | undefined;
-	error: string;
-	touched: boolean;
-	dirty: boolean;
-};
-
-type FieldContextProps<T> = {
+type FieldContextProps<T, Any = unknown> = {
 	value: () => T | undefined;
 	setValue: (value: T | undefined) => void;
 	error: () => string;
 	setError: (error: string) => void;
+	meta: () => Any | undefined;
+	setMeta: (meta: Any) => void;
 	touched: () => boolean;
 	dirty: () => boolean;
 	reset: () => void;
@@ -21,25 +16,25 @@ type FieldContextProps<T> = {
 
 const fieldContext = createContext<FieldContextProps<unknown>>();
 
-function useField<T>(): FieldContextProps<T> {
+function useField<T, Any = unknown>(): FieldContextProps<T, Any> {
 	const ctx = useContext(fieldContext);
 	if (!ctx) throw new Error('useField must be used within a Field');
-	return ctx as FieldContextProps<T>;
+	return ctx as FieldContextProps<T, Any>;
 }
 
-function createField<T>(name: string): FieldContextProps<T> {
+function createField<T, Any = unknown>(name: string): FieldContextProps<T, Any> {
 	const formCtx = useForm<Record<string, T>>();
 
 	// Local state
-	const [initialValue] = createSignal(formCtx.state[name] as T | undefined);
+	const initialValue = formCtx.state[name] as T | undefined;
 	const [value, setValue] = createSignal<T | undefined>(formCtx.state[name] as T | undefined);
 	const [error, setError] = createSignal<string>('');
 	const [touched, setTouched] = createSignal(false);
+	const [meta, setMeta] = createSignal<Any>();
 
 	const dirty = createMemo(() => {
 		const currentValue = value();
-		const initial = initialValue();
-		return touched() && currentValue !== initial;
+		return touched() && currentValue !== initialValue;
 	});
 
 	const updateFormData = () => {
@@ -75,7 +70,7 @@ function createField<T>(name: string): FieldContextProps<T> {
 	};
 
 	const reset = () => {
-		setValue(initialValue() as Exclude<T, Function>);
+		setValue(initialValue as Exclude<T, Function>);
 		setError('');
 		setTouched(false);
 	};
@@ -95,25 +90,28 @@ function createField<T>(name: string): FieldContextProps<T> {
 		setValue: handleSetValue,
 		error,
 		setError,
+		meta,
+		setMeta,
 		touched,
 		dirty,
 		reset,
 	};
 }
 
-type FieldProps<T> = {
+type FieldProps<T, Any> = {
 	name: string;
-	children: (ctx: FieldContextProps<T>) => View;
+	children: (ctx: FieldContextProps<T, Any>) => View;
 };
 
-function Field<T>(props: FieldProps<T>): View {
+function Field<T, Any = unknown>(props: FieldProps<T, Any>): View {
 	const ctx = createField(props.name);
 
 	return (
 		<fieldContext.Provider value={ctx}>
-			{props.children(ctx as FieldContextProps<T>)}
+			{props.children(ctx as FieldContextProps<T, Any>)}
 		</fieldContext.Provider>
 	);
 }
 
-export { type FieldState, type FieldContextProps, useField, createField, type FieldProps, Field };
+export type { FieldContextProps, FieldProps };
+export { useField, createField, Field };
