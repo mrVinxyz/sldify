@@ -2,17 +2,21 @@ import type { JSX } from 'solid-js';
 
 /**
  * A utility type that extracts the value types of an object.
+ * This type gets all possible values that could be held by any property in the object type.
  *
  * @template T - The object type from which to extract value types.
  *
  * @example
- * // Given a type of User
- * type User = {
- *   id: number;
- *   name: string;
+ * // With nested objects
+ * type Config = {
+ *   port: number;
+ *   settings: {
+ *     enabled: boolean;
+ *     mode: 'dark' | 'light';
+ *   }
  * };
  *
- * type UserValue = ValueOf<User>; // Resulting type: number | string
+ * type ConfigValue = ValueOf<Config>; // Resulting type: number | { enabled: boolean; mode: 'dark' | 'light' }
  */
 export type ValueOf<T> = T[keyof T];
 
@@ -31,54 +35,85 @@ export type ValueOf<T> = T[keyof T];
  */
 export type PropsAttr = { [key: string]: unknown };
 
-export type AnyProp = {};
-
 /**
- * Represents a JSX Element.
+ * Represents a JSX Element. This is a type alias for JSX.Element,
+ * which represents the return type of JSX expressions.
  *
  * @example
- * const myElement: View = <div>Hello World</div>;
+ * function createView(props: { children: View }): View {
+ *   return <div>{props.children}</div>;
+ * }
  */
 export type View = JSX.Element;
 
 /**
- * A type representing a component with children.
+ * A type representing a component that requires children.
  *
  * @example
- * const myComponent: ChildProp = {
- *   children: <div>Child content</div>
- * };
+ * function Layout({ children }: ChildProp): View {
+ *   return <main>{children}</main>;
+ * }
  */
 export type ChildProp = { children: View };
 
 /**
- * A type for components with optional children.
+ * A type representing a component that accepts an optional children.
  *
  * @example
- * const myComponent: OptChildProp = {};
+ * function Container(props: OptChildProp): View {
+ *   return <div>{props.children}</div>;
+ * }
  */
 export type OptChildProp = { children?: View };
 
 /**
- * A type representing a component context with a generic type.
+ * A type representing a component context.
  *
- * @template T - The type of the context.
+ * @template T - The type of the context value
  *
  * @example
- * const ctxComponent: ContextProp<{ user: string }> = { ctx: { user: 'John' } };
+ * type UserContext = { username: string; role: string };
+ *
+ * function UserProfile(props: ContextProp<UserContext>): View {
+ *   const ctx = props.ctx;
+ *   return <div>Welcome, {ctx.username}</div>;
+ * }
  */
 export type ContextProp<T> = { ctx: T };
 
 /**
- * A type for components with optional context.
+ * A type representing an optional component context.
  *
- * @template T - The type of the optional context.
+ * @template T - The type of the optional context value
  *
  * @example
- * const ctxComponent: OptContextProp<{ user: string }> = {};
+ * type Theme = { color: string; mode: 'light' | 'dark' };
+ *
+ * function Panel({ ctx }: OptContextProp<Theme>): View {
+ *   return <div style={{ background: ctx?.color }}>Content</div>;
+ * }
  */
 export type OptContextProp<T> = { ctx?: T };
 
+
+/**
+ * A type for components that receive a render function that takes context and returns a View.
+ *
+ * @template T - The type of context passed to the render function
+ *
+ * @example
+ * type DataContext = { data: string[]; loading: boolean };
+ *
+ * function DataProvider(props: ChildrenCtxProp<DataContext>): View {
+ *   const ctx = { data: ['item1', 'item2'], loading: false };
+ *   return props.children(ctx);
+ * }
+ *
+ * // Usage
+ * <DataProvider>
+ *   {(ctx) => <div>{ctx.loading ? 'Loading...' : ctx.data.join(', ')}</div>}
+ * </DataProvider>
+ */
 export type ChildrenCtxProp<T> = {
 	children: (ctx: T) => View;
 };
