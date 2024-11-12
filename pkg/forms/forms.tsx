@@ -1,4 +1,4 @@
-import type { ChildProp, ValueOf, View } from '../utils/types';
+import type { ChildProp, ObjectPartial, View } from '../utils/types';
 import { createStore, type SetStoreFunction, type Store } from 'solid-js/store';
 import {
 	type Accessor,
@@ -10,7 +10,8 @@ import {
 	useContext,
 } from 'solid-js';
 
-type FormsData<T> = Record<string, ValueOf<T>>;
+type FormDataPartial<T> = ObjectPartial<T>;
+type FormsData<T> = FormDataPartial<T>;
 type FormErr = Record<string, string>;
 type FormStatus = 'initial' | 'validating' | 'error' | 'submitting' | 'success' | 'failure';
 
@@ -105,10 +106,14 @@ function setupStorage<T>(
 	});
 
 	createEffect(() => {
-		const currentState: FormsData<T> = {};
+		const currentState = {} as FormsData<T>;
+
 		for (const name of inputNames) {
-			currentState[name] = formCtx.state[name];
+			if (name in formCtx.state) {
+				currentState[name as keyof T] = formCtx.state[name as keyof T];
+			}
 		}
+
 		if (pendingUpdate) clearTimeout(pendingUpdate);
 		pendingUpdate = setTimeout(() => {
 			storage?.write(storageKey, currentState);
@@ -121,7 +126,9 @@ function createForm<T>(props: FormProps<T>): FormContext<T> {
 	const storage = createStorage<T>(props.storage);
 	const storedState = storage?.read(storageKey);
 
-	const [state, setState] = createStore<FormsData<T>>(storedState || props.initialState || {});
+	const [state, setState] = createStore<FormsData<T>>(
+		storedState || props.initialState || ({} as FormsData<T>),
+	);
 	const [status, setStatus] = createSignal<FormStatus>('initial');
 	const [errors, setErrors] = createStore<FormErr>({});
 	const [isValid, setIsValid] = createSignal(false);
@@ -141,20 +148,20 @@ function createForm<T>(props: FormProps<T>): FormContext<T> {
 			const hasErrors = (errors: FormErr): boolean => {
 				setErrors(errors);
 
-				const hasErrors = Object.keys(errors).length > 0;
-				setStatus(hasErrors ? 'error' : 'initial');
-				setIsValid(!hasErrors);
+				const hasError = Object.keys(errors).length > 0;
+				setStatus(hasError ? 'error' : 'initial');
+				setIsValid(!hasError);
 
-				return !hasErrors;
+				return hasError;
 			};
 
 			if (Array.isArray(validated)) {
-				const isError = hasErrors(validated[1]);
-				if (!isError) parsedState = validated[0];
-				return isError;
+				const formValid = !hasErrors(validated[1]);
+				if (formValid) parsedState = validated[0];
+				return formValid;
 			}
 
-			return hasErrors(validated);
+			return !hasErrors(validated);
 		} catch (error) {
 			setStatus('error');
 			return false;
@@ -182,7 +189,7 @@ function createForm<T>(props: FormProps<T>): FormContext<T> {
 	};
 
 	const reset = () => {
-		setState(props.initialState || {});
+		setState(props.initialState || ({} as FormsData<T>));
 		parsedState = null;
 		setErrors({});
 		setStatus('initial');
