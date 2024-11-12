@@ -36,6 +36,45 @@ export type ValueOf<T> = T[keyof T];
 export type PropsAttr = { [key: string]: unknown };
 
 /**
+ * Creates a deep partial type from an object type, allowing all nested properties to be optional.
+ *
+ * @template T - The object type to make deeply partial.
+ *
+ * @example
+ * // Given a nested object
+ * type User = {
+ *   id: number;
+ *   name: string;
+ *   settings: {
+ *     theme: 'light' | 'dark';
+ *     notifications: {
+ *       email: boolean;
+ *       push: boolean;
+ *     }
+ *   }
+ * };
+ *
+ * // All these are valid partial objects
+ * const partialUser: ObjectPartial<User> = {
+ *   id: 1,
+ *   settings: {
+ *     notifications: {
+ *       email: true
+ *     }
+ *   }
+ * };
+ *
+ * @remarks
+ * - This type is particularly useful when dealing with configuration objects or form data
+ *   where some nested properties might be omitted.
+ * - It preserves the original types of non-object properties while making them optional.
+ * - Arrays are treated as objects, so their elements become optional too.
+ */
+export type ObjectPartial<T> = {
+	[P in keyof T]: T[P] extends object ? ObjectPartial<T[P]> : T[P];
+};
+
+/**
  * Represents a JSX Element. This is a type alias for JSX.Element,
  * which represents the return type of JSX expressions.
  *
