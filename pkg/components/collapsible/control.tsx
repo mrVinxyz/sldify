@@ -7,15 +7,20 @@ type CollapsibleControlProps = OptContextProp<CollapsibleContext> & {
 	asChild: ValidComponent;
 };
 
+type CollapsibleController = {
+	id: string;
+	onClick: (e: MouseEvent) => void;
+};
+
 function CollapsibleControl(props: CollapsibleControlProps) {
 	const collapsible = props.ctx ?? useCollapsible();
 	return (
 		<Dynamic
-			id={collapsible.id().concat('-control')}
 			component={props.asChild}
+			id={collapsible.id().concat('-control')}
 			onClick={() => collapsible.toggle()}
 		/>
 	);
 }
 
-export { type CollapsibleControlProps, CollapsibleControl };
+export { type CollapsibleControlProps, type CollapsibleController, CollapsibleControl };
