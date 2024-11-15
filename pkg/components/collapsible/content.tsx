@@ -1,53 +1,26 @@
-import { cva, type VariantProps } from 'class-variance-authority';
-import type { Component } from 'solid-js';
-import type { ChildProp, OptClassProp } from '../../utils/types';
+import type { ChildProp } from '../../utils/types';
+import { type JSX, splitProps } from 'solid-js';
 import { useCollapsible } from './collapsible';
 
-type CollapsibleContentProps = VariantProps<typeof collapsibleContentStyles> &
-	ChildProp &
-	OptClassProp;
+type CollapsibleLayout = 'float' | 'fixed';
 
-const collapsibleContentStyles = cva('z-10 relative', {
-	variants: {
-		placement: {
-			left: 'left-0',
-			right: 'right-0',
-			'': '',
-		},
-		size: {
-			sm: 'w-48',
-			md: 'w-64',
-			lg: 'w-80',
-			xl: 'w-96',
-			full: 'w-full',
-		},
-		visibility: {
-			hidden: 'hidden',
-			visible: '',
-		},
-	},
-	defaultVariants: {
-		placement: 'left',
-		size: 'full',
-		visibility: 'hidden',
-	},
-});
+type CollapsibleContentProps = {
+	layout: CollapsibleLayout;
+} & JSX.IntrinsicElements['div'] &
+	ChildProp;
 
-const CollapsibleContent: Component<CollapsibleContentProps> = (props) => {
+const CollapsibleContent = (props: CollapsibleContentProps) => {
+	const [local, rest] = splitProps(props, ['layout', 'class']);
 	const collapsible = useCollapsible();
 	return (
 		<div
 			id={collapsible.id().concat('-content')}
-			class={collapsibleContentStyles({
-				placement: props.placement,
-				size: props.size,
-				visibility: collapsible.isActive() ? 'visible' : 'hidden',
-				class: props.class,
-			})}
+			class={`${local.layout === 'float' ? 'absolute' : 'relative'} ${local.class || ''}`}
+			{...rest}
 		>
 			{props.children}
 		</div>
 	);
 };
 
-export { type CollapsibleContentProps, CollapsibleContent };
+export { type CollapsibleContentProps, type CollapsibleLayout, CollapsibleContent };
