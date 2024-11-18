@@ -39,18 +39,16 @@ type CollapsibleProps = {
 };
 
 function createCollapsible(props?: Omit<CollapsibleProps, 'ctx' | 'children'>): CollapsibleContext {
-	const id = props?.id ?? generateId('collapsible');
+	const collapsibleId = props?.id ?? generateId('collapsible');
 	const [active, setActive] = createSignal(props?.defaultOpen ?? false);
 	let hoverTimeout: number | undefined;
 	let isFirstActivation = true;
 
-	// Track DOM elements for event handling
 	let rootEl: HTMLElement | null = null;
 	let controlEl: HTMLElement | null = null;
 	let portalEl: HTMLElement | null = null;
 	let contentEl: HTMLElement | null = null;
 
-	// State management functions
 	const show = () => {
 		setActive(true);
 		props?.onActive?.();
@@ -66,7 +64,6 @@ function createCollapsible(props?: Omit<CollapsibleProps, 'ctx' | 'children'>): 
 		props?.onToggle?.(!isActive);
 	};
 
-	// Hover event handlers with delay
 	const handleMouseEnter = () => {
 		clearTimeout(hoverTimeout);
 		hoverTimeout = window.setTimeout(() => show(), props?.hoverDelay);
@@ -79,23 +76,22 @@ function createCollapsible(props?: Omit<CollapsibleProps, 'ctx' | 'children'>): 
 
 	// Initial setup for control element
 	onMount(() => {
-		rootEl = document.getElementById(id);
+		rootEl = document.getElementById(collapsibleId);
 
 		if (props?.hoverDelay !== undefined) {
-			controlEl = document.getElementById(id.concat('-control'));
+			controlEl = document.getElementById(collapsibleId.concat('-control'));
 			if (controlEl) {
 				controlEl.addEventListener('mouseenter', handleMouseEnter);
 			}
 		}
 	});
 
-	// Setup hover handlers after first activation
 	createEffect(() => {
 		if (active() && isFirstActivation && props?.hoverDelay !== undefined) {
 			queueMicrotask(() => {
 				isFirstActivation = false;
-				portalEl = document.getElementById(id.concat('-portal'));
-				contentEl = document.getElementById(id.concat('-content'));
+				portalEl = document.getElementById(collapsibleId.concat('-portal'));
+				contentEl = document.getElementById(collapsibleId.concat('-content'));
 
 				controlEl?.addEventListener('mouseleave', handleMouseLeave);
 
@@ -110,7 +106,6 @@ function createCollapsible(props?: Omit<CollapsibleProps, 'ctx' | 'children'>): 
 		}
 	});
 
-	// Click-outside handling
 	const handleOutsideClick = (e: MouseEvent) => {
 		if (!props?.closeOnOutsideClick) return;
 		const target = e.target as HTMLElement | null;
@@ -120,7 +115,6 @@ function createCollapsible(props?: Omit<CollapsibleProps, 'ctx' | 'children'>): 
 		if (!elements.some((el) => el?.contains(target))) hide();
 	};
 
-	// Global event listeners when active
 	createEffect(() => {
 		if (active()) {
 			const handleEscapeKey = (e: KeyboardEvent) => e.key === 'Escape' && hide();
@@ -134,7 +128,6 @@ function createCollapsible(props?: Omit<CollapsibleProps, 'ctx' | 'children'>): 
 		}
 	});
 
-	// Cleanup all events and timers
 	onCleanup(() => {
 		clearTimeout(hoverTimeout);
 
@@ -153,7 +146,7 @@ function createCollapsible(props?: Omit<CollapsibleProps, 'ctx' | 'children'>): 
 	});
 
 	return {
-		id: () => id,
+		id: () => collapsibleId,
 		show,
 		hide,
 		toggle,
