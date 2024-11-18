@@ -8,7 +8,7 @@ import { ApiReference, type ApiReferenceProps } from '../components/api-referenc
 import { Anatomy } from '../components/anatomy';
 import { type Example, Examples } from '../components/example';
 import IntroDoc from '../components/intro-doc';
-import type { CollapsibleController } from 'pkg/components/collapsible/control';
+import type { CollapsibleController } from 'pkg/components/collapsible/collapsible-control';
 
 const anatomy = `<Collapsible>
   <CollapsibleControl asChild={ControllerComponent}/>
