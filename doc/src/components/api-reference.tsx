@@ -4,6 +4,7 @@ type ApiProp = {
 	name: string;
 	type: string;
 	default?: string;
+	required?: boolean;
 	description: Description;
 };
 
@@ -25,7 +26,9 @@ type ApiReferenceProps = {
 };
 
 const ApiReference: Component<ApiReferenceProps> = (props) => {
+	const [hasRequired, setHasRequired] = createSignal(false);
 	const [hasDefault, setHasDefault] = createSignal(false);
+
 	return (
 		<div class='p-4'>
 			<h2 class='text-2xl font-semibold mb-4 text-neutral-900 dark:text-gray-100'>
@@ -51,6 +54,11 @@ const ApiReference: Component<ApiReferenceProps> = (props) => {
 											<th class='px-4 py-2 text-left text-neutral-900 dark:text-gray-100'>
 												Type
 											</th>
+											<Show when={hasRequired()}>
+												<th class='px-4 py-2 text-left text-neutral-900 dark:text-gray-100'>
+													Required
+												</th>
+											</Show>
 											<Show when={hasDefault()}>
 												<th class='px-4 py-2 text-left text-neutral-900 dark:text-gray-100'>
 													Default
@@ -64,9 +72,10 @@ const ApiReference: Component<ApiReferenceProps> = (props) => {
 									<tbody>
 										<For each={component.props}>
 											{(prop) => {
-												if (!hasDefault() && prop.default) {
+												if (!hasRequired() && prop.required)
+													setHasRequired(true);
+												if (!hasDefault() && prop.default)
 													setHasDefault(true);
-												}
 
 												return (
 													<tr class='border-t dark:border-neutral-700'>
@@ -76,6 +85,11 @@ const ApiReference: Component<ApiReferenceProps> = (props) => {
 														<td class='px-4 py-2 font-mono text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap'>
 															{prop.type}
 														</td>
+														<Show when={hasRequired()}>
+															<td class='px-4 py-2 font-mono text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap'>
+																{prop.required ? '✓' : '-'}
+															</td>
+														</Show>
 														<Show when={hasDefault()}>
 															<td class='px-4 py-2 font-mono text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap'>
 																{prop.default || '-'}

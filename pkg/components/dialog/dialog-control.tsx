@@ -59,4 +59,5 @@ function DialogControl(props: DialogControlProps): View {
 	);
 }
 
-export { type DialogControlProps, type DialogController, DialogControl };
+export type { DialogControlProps, DialogController };
+export { DialogControl };

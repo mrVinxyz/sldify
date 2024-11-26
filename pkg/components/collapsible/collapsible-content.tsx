@@ -1,10 +1,8 @@
-import {createEffect, createSignal, type JSX, Show, splitProps} from 'solid-js';
+import { createEffect, createSignal, type JSX, Show, splitProps } from 'solid-js';
 import { useCollapsible } from './collapsible';
 
-type CollapsibleLayout = 'float' | 'fixed';
-
 type CollapsibleContentProps = {
-	layout: CollapsibleLayout;
+	layout: 'float' | 'fixed';
 	autoMount?: boolean;
 } & JSX.IntrinsicElements['div'];
 
@@ -37,5 +35,4 @@ const CollapsibleContent = (props: CollapsibleContentProps) => {
 	);
 };
 
-
-export { type CollapsibleContentProps, type CollapsibleLayout, CollapsibleContent };
+export { type CollapsibleContentProps, CollapsibleContent };

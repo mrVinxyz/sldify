@@ -3,13 +3,9 @@ import { ApiReference, type ApiReferenceProps } from '../components/api-referenc
 import { Anatomy } from '../components/anatomy';
 import { type Example, Examples } from '../components/example';
 import IntroDoc from '../components/intro-doc';
-import { Dialog } from 'pkg/components/dialog/dialog';
-import { DialogControl } from 'pkg/components/dialog/dialog-control';
-import { DialogContent } from 'pkg/components/dialog/dialog-content';
-import { DialogTitle } from 'pkg/components/dialog/dialog-title';
 import { AccessibilityDoc, type AccessibilityDocProps } from '../components/accessibility';
 import { Usage, type UsageExample } from '../components/usage';
-import { DialogDescription } from 'pkg/components/dialog/dialog-description';
+import {Dialog, DialogContent, DialogControl, DialogTitle} from "pkg";
 
 const anatomy = `<Dialog>
   <DialogControl asChild={Component} />

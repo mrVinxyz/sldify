@@ -12,6 +12,18 @@ type ExamplesProps = {
 };
 
 const Examples = (props: ExamplesProps) => {
+	const HighlightedCode = (props: { code: string }) => {
+		return (
+			<code
+				class={
+					'px-2 py-1 text-sm bg-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 rounded me-2'
+				}
+			>
+				{props.code}
+			</code>
+		);
+	};
+
 	return (
 		<div class='p-4'>
 			<h2 class='text-2xl font-semibold mb-4 text-neutral-900 dark:text-neutral-100'>
@@ -30,25 +42,13 @@ const Examples = (props: ExamplesProps) => {
 								</p>
 								<Switch>
 									<Match when={typeof example.description.highlight === 'string'}>
-										<code
-											class={
-												'px-2 py-1 text-sm bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 rounded'
-											}
-										>
-											{example.description.highlight}
-										</code>
+										<HighlightedCode
+											code={example.description.highlight as string}
+										/>
 									</Match>
 									<Match when={Array.isArray(example.description.highlight)}>
 										<For each={example.description.highlight as string[]}>
-											{(hl) => (
-												<code
-													class={
-														'px-2 py-1 text-sm bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 rounded me-2'
-													}
-												>
-													{hl}
-												</code>
-											)}
+											{(hl) => <HighlightedCode code={hl} />}
 										</For>
 									</Match>
 								</Switch>

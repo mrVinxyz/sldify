@@ -10,7 +10,7 @@ type DialogTitleProps = {
 	srOnly?: boolean;
 };
 
-export function DialogTitle(props: DialogTitleProps) {
+function DialogTitle(props: DialogTitleProps) {
 	const dialog = useDialog();
 
 	return (
@@ -23,3 +23,5 @@ export function DialogTitle(props: DialogTitleProps) {
 		</Dynamic>
 	);
 }
+
+export { type DialogTitleProps, DialogTitle };

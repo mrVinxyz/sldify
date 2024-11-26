@@ -1,14 +1,11 @@
-import {
-	Button,
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleControl,
-} from 'pkg';
+
 import { ApiReference, type ApiReferenceProps } from '../components/api-reference';
 import { Anatomy } from '../components/anatomy';
 import { type Example, Examples } from '../components/example';
 import IntroDoc from '../components/intro-doc';
-import type { CollapsibleController } from 'pkg/components/collapsible/collapsible-control';
+import {Button} from "pkg";
+import {Collapsible, CollapsibleContent, CollapsibleControl, CollapsibleController} from 'pkg';
+
 
 const anatomy = `<Collapsible>
   <CollapsibleControl asChild={ControllerComponent}/>
