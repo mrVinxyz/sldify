@@ -5,15 +5,10 @@ import { Route, Router, type RouteSectionProps } from '@solidjs/router';
 import Dev from './dev';
 import DialogDoc from './pages/dialog-doc';
 import ModalDialogDoc from './pages/modal-dialog-doc';
-import SelectFieldDoc from './pages/field/select-field-doc';
-import SearchFieldDoc from './pages/field/search-field-doc';
 import ColorModeToggler from '../../pkg/components/button/color-mode-toggler';
-import InputDoc from './pages/input/input-doc';
+import InputFieldDoc from './pages/field/input-field-doc';
 import CheckboxFieldDoc from './pages/field/checkbox-field-doc';
-import { Checkbox } from 'pkg/components/input/checkbox';
-import CheckboxDoc from './pages/input/checkbox-doc';
-import TextAreaDoc from './pages/input/textarea-doc';
-import RadioDoc from './pages/input/radio-doc';
+import SelectFieldDoc from './pages/field/select-field-doc';
 
 render(() => <Routing />, document.body);
 
@@ -43,28 +38,16 @@ function Routing() {
 				component={ModalDialogDoc}
 			/>
 			<Route
-				path='/input'
-				component={InputDoc}
+				path='/input-field'
+				component={InputFieldDoc}
 			/>
 			<Route
-				path='/select'
+				path='/checkbox-field'
+				component={CheckboxFieldDoc}
+			/>
+			<Route
+				path='/select-field'
 				component={SelectFieldDoc}
-			/>
-			<Route
-				path='/search'
-				component={SearchFieldDoc}
-			/>
-			<Route
-				path='/checkbox'
-				component={CheckboxDoc}
-			/>
-			<Route
-				path='textarea'
-				component={TextAreaDoc}
-			/>
-			<Route
-				path='radio'
-				component={RadioDoc}
 			/>
 		</Router>
 	);
