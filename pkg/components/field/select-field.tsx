@@ -2,7 +2,7 @@ import { type Component, For, type JSX, splitProps } from 'solid-js';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { FieldGroup, type FieldGroupProps } from './field';
 import type { BaseInputProps } from './base';
-import cn from "../../utils/cn";
+import cn from '../../utils/cn';
 
 const SELECT_STYLES = [
 	'block w-full text-sm font-medium rounded-lg transition-colors focus-visible:outline-none focus:ring-2',
@@ -36,7 +36,7 @@ type SelectProps<T = unknown> = {
 	options: SelectOption<T>[];
 	placeholder?: string;
 	defaultValue?: T;
-	onChange?: (value: T) => void;
+	onSelected?: (value: T) => void;
 	value?: T;
 } & BaseInputProps &
 	Omit<JSX.IntrinsicElements['select'], 'size' | 'onChange'>;
@@ -105,16 +105,16 @@ const Select = <T,>(props: SelectProps<T>) => {
 		'placeholder',
 		'value',
 		'defaultValue',
-		'onChange',
+		'onSelected',
 	]);
 
 	const currentValue = local.value ?? local.defaultValue;
 
-	const handleChange = (e: Event) => {
+	const handleValueChange = (e: Event) => {
 		const select = e.target as HTMLSelectElement;
 		const selectedOption = local.options.find((opt) => valueParser(opt.value) === select.value);
-		if (selectedOption && local.onChange) {
-			local.onChange(selectedOption.value);
+		if (selectedOption && local.onSelected) {
+			local.onSelected(selectedOption.value);
 		}
 	};
 
@@ -123,7 +123,7 @@ const Select = <T,>(props: SelectProps<T>) => {
 			class={cn(SELECT_STYLES, local.class)}
 			data-state={local.variant !== 'default' ? local.variant : undefined}
 			data-size={local.size || 'md'}
-			onChange={handleChange}
+			onChange={handleValueChange}
 			value={currentValue !== undefined ? valueParser(currentValue) : ''}
 			{...rest}
 		>
@@ -152,7 +152,7 @@ const Select = <T,>(props: SelectProps<T>) => {
 
 type SelectFieldProps<T = unknown> = SelectProps<T> & Omit<FieldGroupProps, 'child' | 'variant'>;
 
-const SelectField: Component<SelectFieldProps> = (props) => {
+const SelectField = <T = unknown>(props: SelectFieldProps<T>) => {
 	const [fieldProps, selectProps] = splitProps(props, [
 		'name',
 		'label',

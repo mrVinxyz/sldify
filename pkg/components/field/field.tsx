@@ -1,7 +1,7 @@
-import { Label } from '../input/label';
 import generateId from '../../utils/id';
 import { type Component, type JSX, splitProps, type ValidComponent } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
+import { Label } from './label';
 
 type FieldGroupProps = {
 	name: string;

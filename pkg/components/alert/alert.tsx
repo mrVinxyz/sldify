@@ -8,7 +8,7 @@ import {
 	Show,
 	useContext,
 } from 'solid-js';
-import type {ChildProp, OptClassProp, OptContextProp} from '../../utils/types';
+import type {ChildProp, ClassesProp, OptContextProp} from '../../utils/types';
 
 type AlertContext = {
 	show: () => void;
@@ -19,7 +19,7 @@ type AlertContext = {
 type AlertProps = OptContextProp<AlertContext> &
 	VariantProps<typeof alertVariants> &
 	ChildProp &
-	OptClassProp & {
+	ClassesProp & {
 	duration?: number;
 	onShow?: () => void;
 	onHide?: () => void;

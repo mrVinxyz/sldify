@@ -18,7 +18,7 @@ import type { JSX } from 'solid-js';
  *
  * type ConfigValue = ValueOf<Config>; // Resulting type: number | { enabled: boolean; mode: 'dark' | 'light' }
  */
-export type ValueOf<T> = T[keyof T];
+type ValueOf<T> = T[keyof T];
 
 /**
  * A type for representing any valid HTML attributes.
@@ -33,7 +33,7 @@ export type ValueOf<T> = T[keyof T];
  *
  * <div {...myProps} />
  */
-export type PropsAttr = { [key: string]: unknown };
+type PropsAttr = { [key: string]: unknown };
 
 /**
  * Creates a deep partial type from an object type, allowing all nested properties to be optional.
@@ -70,7 +70,7 @@ export type PropsAttr = { [key: string]: unknown };
  * - It preserves the original types of non-object properties while making them optional.
  * - Arrays are treated as objects, so their elements become optional too.
  */
-export type ObjectPartial<T> = {
+type ObjectPartial<T> = {
 	[P in keyof T]: T[P] extends object ? ObjectPartial<T[P]> : T[P];
 };
 
@@ -83,7 +83,7 @@ export type ObjectPartial<T> = {
  *   return <div>{props.children}</div>;
  * }
  */
-export type View = JSX.Element;
+type View = JSX.Element;
 
 /**
  * A type representing a component that requires children.
@@ -93,7 +93,7 @@ export type View = JSX.Element;
  *   return <main>{children}</main>;
  * }
  */
-export type ChildProp = { children: View };
+type ChildProp = { children: View };
 
 /**
  * A type representing a component that accepts an optional children.
@@ -103,7 +103,7 @@ export type ChildProp = { children: View };
  *   return <div>{props.children}</div>;
  * }
  */
-export type OptChildProp = { children?: View };
+type OptChildProp = { children?: View };
 
 /**
  * A type representing a component context.
@@ -118,7 +118,7 @@ export type OptChildProp = { children?: View };
  *   return <div>Welcome, {ctx.username}</div>;
  * }
  */
-export type ContextProp<T> = { ctx: T };
+type ContextProp<T> = { ctx: T };
 
 /**
  * A type representing an optional component context.
@@ -132,8 +132,7 @@ export type ContextProp<T> = { ctx: T };
  *   return <div style={{ background: ctx?.color }}>Content</div>;
  * }
  */
-export type OptContextProp<T> = { ctx?: T };
-
+type OptContextProp<T> = { ctx?: T };
 
 /**
  * A type for components that receive a render function that takes context and returns a View.
@@ -153,7 +152,7 @@ export type OptContextProp<T> = { ctx?: T };
  *   {(ctx) => <div>{ctx.loading ? 'Loading...' : ctx.data.join(', ')}</div>}
  * </DataProvider>
  */
-export type ChildrenCtxProp<T> = {
+type ChildContextProp<T> = {
 	children: (ctx: T) => View;
 };
 
@@ -163,7 +162,7 @@ export type ChildrenCtxProp<T> = {
  * @example
  * const elementClass: ClassName = 'my-class';
  */
-export type ClassName = HTMLElement['className'];
+type ClassName = HTMLElement['className'];
 
 /**
  * A type for components with optional class name attributes.
@@ -171,38 +170,20 @@ export type ClassName = HTMLElement['className'];
  * @example
  * const myClassNames: ClassNames = { className: 'my-class' };
  */
-export type OptClassProp = {
+type ClassesProp = {
 	class?: ClassName;
 };
 
-/**
- * A utility type that creates a new type by omitting specified properties from the original type.
- *
- * @template T - The original type from which properties will be omitted.
- * @template K - The keys of the properties to be omitted from the original type.
- *
- * @example
- * // Given a type of Person
- * type Person = {
- *   name: string;
- *   age: number;
- *   email: string;
- * };
- *
- * // Creating a new type without the email property
- * type PersonWithoutEmail = OmitProp<Person, 'email'>;
- * // Resulting type:
- * // {
- * //   name: string;
- * //   age: number;
- * // }
- *
- * @example
- * // Omitting multiple properties
- * type PersonWithoutContactInfo = OmitProp<Person, 'email' | 'age'>;
- * // Resulting type:
- * // {
- * //   name: string;
- * // }
- */
-export type OmitProps<T, K extends PropertyKey> = { [P in keyof T as Exclude<P, K>]: T[P] };
+export type {
+	ValueOf,
+	PropsAttr,
+	ObjectPartial,
+	View,
+	ChildProp,
+	OptChildProp,
+	ContextProp,
+	OptContextProp,
+	ChildContextProp,
+	ClassName,
+	ClassesProp,
+};
