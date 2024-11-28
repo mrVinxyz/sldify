@@ -54,16 +54,16 @@ const ApiReference: Component<ApiReferenceProps> = (props) => {
 											<th class='px-4 py-2 text-left text-neutral-900 dark:text-gray-100'>
 												Type
 											</th>
-											<Show when={hasRequired()}>
-												<th class='px-4 py-2 text-left text-neutral-900 dark:text-gray-100'>
-													Required
-												</th>
-											</Show>
-											<Show when={hasDefault()}>
-												<th class='px-4 py-2 text-left text-neutral-900 dark:text-gray-100'>
-													Default
-												</th>
-											</Show>
+											{/*<Show when={hasRequired()}>*/}
+											{/*	<th class='px-4 py-2 text-left text-neutral-900 dark:text-gray-100'>*/}
+											{/*		Required*/}
+											{/*	</th>*/}
+											{/*</Show>*/}
+											{/*<Show when={hasDefault()}>*/}
+											{/*	<th class='px-4 py-2 text-left text-neutral-900 dark:text-gray-100'>*/}
+											{/*		Default*/}
+											{/*	</th>*/}
+											{/*</Show>*/}
 											<th class='px-4 py-2 text-left text-neutral-900 dark:text-gray-100'>
 												Description
 											</th>
@@ -85,16 +85,16 @@ const ApiReference: Component<ApiReferenceProps> = (props) => {
 														<td class='px-4 py-2 font-mono text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap'>
 															{prop.type}
 														</td>
-														<Show when={hasRequired()}>
-															<td class='px-4 py-2 font-mono text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap'>
-																{prop.required ? '✓' : '-'}
-															</td>
-														</Show>
-														<Show when={hasDefault()}>
-															<td class='px-4 py-2 font-mono text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap'>
-																{prop.default || '-'}
-															</td>
-														</Show>
+														{/*<Show when={hasRequired()}>*/}
+														{/*	<td class='px-4 py-2 font-mono text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap'>*/}
+														{/*		{prop.required ? '✓' : '-'}*/}
+														{/*	</td>*/}
+														{/*</Show>*/}
+														{/*<Show when={hasDefault()}>*/}
+														{/*	<td class='px-4 py-2 font-mono text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap'>*/}
+														{/*		{prop.default || '-'}*/}
+														{/*	</td>*/}
+														{/*</Show>*/}
 														<td class='p-2 text-sm text-gray-600 dark:text-gray-300 min-w-[300px]'>
 															{typeof prop.description ===
 															'string' ? (

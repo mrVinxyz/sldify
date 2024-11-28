@@ -1,8 +1,0 @@
-{
-    "scripts": {
-        "dev": "vite dev"
-    },
-    "devDependencies": {
-        "pkg": "file:../pkg"
-    }
-}
