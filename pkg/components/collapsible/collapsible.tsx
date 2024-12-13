@@ -168,10 +168,5 @@ const Collapsible: Component<CollapsibleProps> = (props) => {
 	);
 };
 
-export {
-	type CollapsibleContext,
-	type CollapsibleProps,
-	useCollapsible,
-	createCollapsible,
-	Collapsible,
-};
+export type { CollapsibleContext, CollapsibleProps };
+export { useCollapsible, createCollapsible, Collapsible };

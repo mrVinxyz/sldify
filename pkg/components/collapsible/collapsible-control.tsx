@@ -23,4 +23,5 @@ function CollapsibleControl(props: CollapsibleControlProps) {
 	);
 }
 
-export { type CollapsibleControlProps, type CollapsibleController, CollapsibleControl };
+export type { CollapsibleControlProps, CollapsibleController };
+export { CollapsibleControl };

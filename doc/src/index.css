@@ -2,6 +2,7 @@
 
 @tailwind base;
 @tailwind utilities;
+@tailwind components;
 
 body {
     font-family: 'Poppins', sans-serif;
@@ -14,10 +15,24 @@ body {
 
 ::-webkit-scrollbar-track {
     background: #f9fafb;
-    border-radius: 5px;
+    border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 5px;
+    background: #e5e7eb;
+    border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: #18181b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #27272a;
+}
+
+@layer components {
+    .btn {
+        border-radius: theme('borderRadius.DEFAULT');
+    }
 }

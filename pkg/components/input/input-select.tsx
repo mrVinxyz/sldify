@@ -1,9 +1,9 @@
 import { createSignal, For, splitProps } from 'solid-js';
 import { Input, type InputProps } from './input';
 import { Collapsible, createCollapsible } from '../collapsible/collapsible';
-import { CollapsibleControl } from '../collapsible/control';
-import { CollapsibleContent } from '../collapsible/content';
+import { CollapsibleControl } from '../collapsible/collapsible-control';
 import { cva } from 'class-variance-authority';
+import {CollapsibleContent} from "../collapsible/collapsible-content";
 
 type InputSelectOption<T> = {
 	label?: string;
@@ -149,7 +149,7 @@ function InputSelect<T>(props: InputSelectProps<T>) {
 	return (
 		<Collapsible ctx={collapsible}>
 			<CollapsibleControl asChild={ThisInput} />
-			<CollapsibleContent>
+			<CollapsibleContent layout={'fixed'}>
 				<OptionsContainer />
 			</CollapsibleContent>
 		</Collapsible>

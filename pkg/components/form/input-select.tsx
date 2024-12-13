@@ -10,7 +10,8 @@ type FormInputSelectProps<T extends string | number | object> = InputSelectProps
 	label: string;
 	mask?: (e: InputEvent) => void;
 	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-	key?: keyof T;
+	labelKey?: keyof T;
+	valueKey?: keyof T;
 };
 
 const FormInputSelect = <T extends string | number | object>(props: FormInputSelectProps<T>) => {
@@ -21,11 +22,21 @@ const FormInputSelect = <T extends string | number | object>(props: FormInputSel
 		'mask',
 		'size',
 		'required',
-		'key',
+		'labelKey',
+		'valueKey',
 		'onChange',
+		'type',
 	]);
 
 	const name = local.name as string;
+
+	const parseValue = (value: T | undefined): T | undefined => {
+		if (typeof value === 'object' && value !== null && local.valueKey) {
+			return (value as Record<string, T>)[local.valueKey as string];
+		}
+
+		return value;
+	};
 
 	return (
 		<Field<T, string> name={name}>
@@ -34,12 +45,12 @@ const FormInputSelect = <T extends string | number | object>(props: FormInputSel
 					const value = field.value();
 					if (value === undefined) return '';
 
-					if (typeof value === 'object' && value !== null && local.key) {
-						const propertyValue = value[local.key];
+					if (typeof value === 'object' && value !== null && local.labelKey) {
+						const propertyValue = value[local.labelKey];
 						return propertyValue != null ? String(propertyValue) : '';
 					}
 
-					return String(value || '');
+					return field.meta() || String(value || '');
 				};
 
 				return (
@@ -53,15 +64,17 @@ const FormInputSelect = <T extends string | number | object>(props: FormInputSel
 							id={name}
 							onSelected={(option) => {
 								queueMicrotask(() => {
+									const parsedValue = parseValue(option.value);
+
 									field.setMeta(option.label || '');
-									field.setValue(option.value);
+									field.setValue(parsedValue);
 									field.setError('');
 								});
 							}}
 							variant={field.error() ? 'error' : 'default'}
 							required={local.required}
 							defaultOption={{
-								label: field.meta() || getDisplayValue(),
+								label: getDisplayValue(),
 								value: field.value(),
 							}}
 							name={name}
